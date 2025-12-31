@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+//import Qt.labs.platform
 
 // 新增：用于灵活布局
 ApplicationWindow {
@@ -66,5 +67,19 @@ ApplicationWindow {
                                  root.startSystemMove()
         }
     }
+    // SystemTrayIcon {
+    //     id: tray
+    //     visible: true
+    //     icon.source: "svgIcons/light/icon.png"
 
+    //     onActivated: {
+    //         root.show()
+    //         root.raise()
+    //         root.requestActivate()
+    //     }
+    //     Component.onCompleted: {
+    //         console.log("Tray icon source:", tray.icon.source)
+    //         tray.show()
+    //     }
+    // }
 }
