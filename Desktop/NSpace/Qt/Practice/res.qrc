@@ -28,6 +28,35 @@
         <file>icons/light/list/music_white.svg</file>
         <file>icons/light/list/music-2_white.svg</file>
         <file>icons/light/list/search_white.svg</file>
+        <file>icons/awefont/file-lines-solid.svg</file>
+        <file>icons/awefont/gear-solid.svg</file>
+        <file>icons/awefont/list-ul-solid.svg</file>
+        <file>icons/awefont/play-solid.svg</file>
+        <file>icons/awefont/list/file-contract-solid.svg</file>
+        <file>icons/awefont/list/file-solid.svg</file>
+        <file>icons/awefont/list/folder-open-solid.svg</file>
+        <file>icons/awefont/list/location-crosshairs-solid.svg</file>
+        <file>icons/awefont/list/magnifying-glass-solid.svg</file>
+        <file>icons/awefont/list/music-solid.svg</file>
+        <file>icons/awefont/list/trash-solid.svg</file>
+        <file>icons/awefont/player/backward-step-solid.svg</file>
+        <file>icons/awefont/player/chevron-left-solid.svg</file>
+        <file>icons/awefont/player/file-lines-solid.svg</file>
+        <file>icons/awefont/player/forward-step-solid.svg</file>
+        <file>icons/awefont/player/heart-regular.svg</file>
+        <file>icons/awefont/player/heart-solid.svg</file>
+        <file>icons/awefont/player/pause-solid.svg</file>
+        <file>icons/awefont/player/repeat-solid.svg</file>
+        <file>icons/awefont/player/shuffle-solid.svg</file>
+        <file>icons/awefont/player/volume-high-solid.svg</file>
+        <file>icons/awefont/player/volume-low-solid.svg</file>
+        <file>icons/awefont/player/volume-off-solid.svg</file>
+        <file>icons/awefont/player/volume-xmark-solid.svg</file>
+        <file>icons/awefont/setting/circle-info-solid.svg</file>
+        <file>icons/awefont/setting/code-solid.svg</file>
+        <file>icons/awefont/setting/info-solid.svg</file>
+        <file>icons/awefont/setting/puzzle-piece-solid.svg</file>
+        <file>icons/awefont/setting/wrench-solid.svg</file>
     </qresource>
     <qresource prefix="/font">
         <file>font/segoesc.ttf</file>

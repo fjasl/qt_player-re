@@ -49,117 +49,21 @@ ColumnLayout {
                 Layout.fillHeight: true
             }
 
-            // 2. 业务组件
-            // Rectangle {
-            //     // 注意：使用 Layout.preferredWidth/Height 替代 width/height
-            //     Layout.preferredWidth: parent.width * 0.5
-            //     Layout.preferredHeight: parent.height * 0.125
-            //     color: "transparent"
-            //     Layout.alignment: Qt.AlignHCenter // 次轴(水平)居中
-            //     Image {
-            //         // 1. 让 Image 占据 Rectangle 的全部空间
-            //         anchors.fill: parent
-
-            //         // 2. 核心：必须设置 sourceSize，否则 SVG 不会自动适配大小
-            //         // 将矢量渲染尺寸设置为父容器的大小
-            //         sourceSize.width: parent.width
-            //         sourceSize.height: parent.height
-
-            //         // 3. 保持比例缩放，防止图标拉伸变形
-            //         fillMode: Image.PreserveAspectFit
-
-            //         // 4. 确保在 Image 内部也居中对齐
-            //         horizontalAlignment: Image.AlignHCenter
-            //         verticalAlignment: Image.AlignVCenter
-
-            //         source: "svgIcons/light/play_white.svg"
-            //     }
-            // }
-            LeftNavButton{
-                source: "qrc:/icon/icons/light/play_white.svg"
+            LeftNavButton {
+                source: "qrc:/icon/icons/awefont/play-solid.svg"
             }
 
-            // Rectangle {
-            //     Layout.preferredWidth: parent.width * 0.5
-            //     Layout.preferredHeight: parent.height * 0.125
-            //     color: "transparent"
-            //     Layout.alignment: Qt.AlignHCenter
-            //     Image {
-            //         // 1. 让 Image 占据 Rectangle 的全部空间
-            //         anchors.fill: parent
-
-            //         // 2. 核心：必须设置 sourceSize，否则 SVG 不会自动适配大小
-            //         // 将矢量渲染尺寸设置为父容器的大小
-            //         sourceSize.width: parent.width
-            //         sourceSize.height: parent.height
-
-            //         // 3. 保持比例缩放，防止图标拉伸变形
-            //         fillMode: Image.PreserveAspectFit
-
-            //         // 4. 确保在 Image 内部也居中对齐
-            //         horizontalAlignment: Image.AlignHCenter
-            //         verticalAlignment: Image.AlignVCenter
-
-            //         source: "svgIcons/light/scroll-text_white.svg"
-            //     }
-            // }
-            LeftNavButton{
-                source: "qrc:/icon/icons/light/scroll-text_white.svg"
+            LeftNavButton {
+                source: "qrc:/icon/icons/awefont/file-lines-solid.svg"
             }
-            // Rectangle {
-            //     Layout.preferredWidth: parent.width * 0.5
-            //     Layout.preferredHeight: parent.height * 0.125
-            //     color: "transparent"
-            //     Layout.alignment: Qt.AlignHCenter
-            //     Image {
-            //         // 1. 让 Image 占据 Rectangle 的全部空间
-            //         anchors.fill: parent
 
-            //         // 2. 核心：必须设置 sourceSize，否则 SVG 不会自动适配大小
-            //         // 将矢量渲染尺寸设置为父容器的大小
-            //         sourceSize.width: parent.width
-            //         sourceSize.height: parent.height
+            LeftNavButton {
+                source: "qrc:/icon/icons/awefont/list-ul-solid.svg"
+            }
 
-            //         // 3. 保持比例缩放，防止图标拉伸变形
-            //         fillMode: Image.PreserveAspectFit
-
-            //         // 4. 确保在 Image 内部也居中对齐
-            //         horizontalAlignment: Image.AlignHCenter
-            //         verticalAlignment: Image.AlignVCenter
-
-            //         source: "svgIcons/light/list-music_white.svg"
-            //     }
-            // }
-            LeftNavButton{
-                            source: "qrc:/icon/icons/light/list-music_white.svg"
-                        }
-            // Rectangle {
-            //     Layout.preferredWidth: parent.width * 0.5
-            //     Layout.preferredHeight: parent.height * 0.125
-            //     color: "transparent"
-            //     Layout.alignment: Qt.AlignHCenter
-            //     Image {
-            //         // 1. 让 Image 占据 Rectangle 的全部空间
-            //         anchors.fill: parent
-
-            //         // 2. 核心：必须设置 sourceSize，否则 SVG 不会自动适配大小
-            //         // 将矢量渲染尺寸设置为父容器的大小
-            //         sourceSize.width: parent.width
-            //         sourceSize.height: parent.height
-
-            //         // 3. 保持比例缩放，防止图标拉伸变形
-            //         fillMode: Image.PreserveAspectFit
-
-            //         // 4. 确保在 Image 内部也居中对齐
-            //         horizontalAlignment: Image.AlignHCenter
-            //         verticalAlignment: Image.AlignVCenter
-
-            //         source: "svgIcons/light/settings_white.svg"
-            //     }
-            // }
-            LeftNavButton{
-                            source: "qrc:/icon/icons/light/settings_white.svg"
-                        }
+            LeftNavButton {
+                source: "qrc:/icon/icons/awefont/gear-solid.svg"
+            }
             // 3. 底部占位符
             Item {
                 Layout.fillHeight: true
