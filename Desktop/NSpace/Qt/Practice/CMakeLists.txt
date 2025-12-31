@@ -14,14 +14,14 @@ qt_add_executable(appPractice
 
 qt_add_qml_module(appPractice
     URI Practice
-    QML_FILES
-        Main.qml
+        QML_FILES Main.qml
         QML_FILES RoundCornorContainer.qml
         QML_FILES LeftPaneContent.qml
-        RESOURCES font/segoesc.ttf
-        RESOURCES svgIcons/light/list/file-music_white.svg svgIcons/light/list/locate-fixed_white.svg svgIcons/light/list/music-2_white.svg svgIcons/light/list/music_white.svg svgIcons/light/list/search_white.svg svgIcons/light/player/chevron-left_white.svg svgIcons/light/player/heart_white.svg svgIcons/light/player/pause_white.svg svgIcons/light/player/play_white.svg svgIcons/light/player/skip-back_white.svg svgIcons/light/player/skip-forward_white.svg svgIcons/light/player/volume-1_white.svg svgIcons/light/player/volume-2_white.svg svgIcons/light/player/volume-x_white.svg svgIcons/light/player/volume_white.svg svgIcons/light/setting/blocks_white.svg svgIcons/light/setting/book_white.svg svgIcons/light/setting/info_white.svg svgIcons/light/setting/message-square-warning_white.svg svgIcons/light/setting/wrench_white.svg svgIcons/light/list-music_white.svg svgIcons/light/play_white.svg svgIcons/light/scroll-text_white.svg svgIcons/light/settings_white.svg
+        QML_FILES LeftNavButton.qml
         RESOURCES res.qrc
+
        )
+
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     // 4. 创建托盘
     QSystemTrayIcon *tray = new QSystemTrayIcon(&app);
-    tray->setIcon(QIcon(":/icon/icons/icon.png"));
+    tray->setIcon(QIcon(":/tray/icons/tray/icon.png"));
     tray->setToolTip("Practice");
 
     // 5. 创建菜单

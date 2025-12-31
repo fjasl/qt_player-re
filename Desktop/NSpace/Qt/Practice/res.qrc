@@ -1,6 +1,35 @@
 <RCC>
+    <qresource prefix="/tray">
+        <file>icons/tray/icon.ico</file>
+        <file>icons/tray/icon.png</file>
+    </qresource>
     <qresource prefix="/icon">
-        <file>icons/icon.ico</file>
-        <file>icons/icon.png</file>
+        <file>icons/light/list-music_white.svg</file>
+        <file>icons/light/play_white.svg</file>
+        <file>icons/light/scroll-text_white.svg</file>
+        <file>icons/light/settings_white.svg</file>
+        <file>icons/light/setting/blocks_white.svg</file>
+        <file>icons/light/setting/book_white.svg</file>
+        <file>icons/light/setting/info_white.svg</file>
+        <file>icons/light/setting/message-square-warning_white.svg</file>
+        <file>icons/light/setting/wrench_white.svg</file>
+        <file>icons/light/player/chevron-left_white.svg</file>
+        <file>icons/light/player/heart_white.svg</file>
+        <file>icons/light/player/pause_white.svg</file>
+        <file>icons/light/player/play_white.svg</file>
+        <file>icons/light/player/skip-back_white.svg</file>
+        <file>icons/light/player/skip-forward_white.svg</file>
+        <file>icons/light/player/volume_white.svg</file>
+        <file>icons/light/player/volume-1_white.svg</file>
+        <file>icons/light/player/volume-2_white.svg</file>
+        <file>icons/light/player/volume-x_white.svg</file>
+        <file>icons/light/list/file-music_white.svg</file>
+        <file>icons/light/list/locate-fixed_white.svg</file>
+        <file>icons/light/list/music_white.svg</file>
+        <file>icons/light/list/music-2_white.svg</file>
+        <file>icons/light/list/search_white.svg</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>font/segoesc.ttf</file>
     </qresource>
 </RCC>
