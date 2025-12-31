@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+
 //import Qt.labs.platform
 
 // 新增：用于灵活布局
@@ -12,6 +13,15 @@ ApplicationWindow {
     visible: true
     flags: Qt.FramelessWindowHint
     color: "transparent"
+    Item {
+        anchors.fill: parent
+
+        DragHandler {
+            onActiveChanged: if (active)
+                                 root.startSystemMove()
+        }
+    }
+
     Rectangle {
         width: parent.width
         height: parent.height
@@ -39,6 +49,7 @@ ApplicationWindow {
                         Layout.preferredWidth: parent.width * 0.10
                         // Layout.fillWidth: true + preferredWidth 也可以，但这里直接用比例更直观
                         LeftPaneContent {}
+
                     }
 
                     // 中间 88%
@@ -48,38 +59,17 @@ ApplicationWindow {
                         color: "black"
                         Layout.fillHeight: true
                         Layout.preferredWidth: parent.width * 0.88 // 明确指定 88%
+                        Item {
+                            anchors.fill: parent
+
+                            DragHandler {
+                            }
+                        }
                     }
                 }
             }
         }
     }
-    // RoundCornorContainer {
-    //     width: parent.width * 0.6
-    //     height: parent.height * 0.6
-    //     color: "red"
-    //     radius: 20
-    // }
-    Item {
-        anchors.fill: parent
 
-        DragHandler {
-            onActiveChanged: if (active)
-                                 root.startSystemMove()
-        }
-    }
-    // SystemTrayIcon {
-    //     id: tray
-    //     visible: true
-    //     icon.source: "svgIcons/light/icon.png"
 
-    //     onActivated: {
-    //         root.show()
-    //         root.raise()
-    //         root.requestActivate()
-    //     }
-    //     Component.onCompleted: {
-    //         console.log("Tray icon source:", tray.icon.source)
-    //         tray.show()
-    //     }
-    // }
 }

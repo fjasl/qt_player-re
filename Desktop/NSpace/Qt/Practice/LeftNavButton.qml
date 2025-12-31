@@ -35,6 +35,7 @@ Rectangle {
         id: mouseArea
         anchors.fill: parent
         hoverEnabled: true
+        cursorShape: Qt.PointingHandCursor
 
         // 悬停时缩小，离开时恢复
         onEntered: innerImage.scale = 0.8

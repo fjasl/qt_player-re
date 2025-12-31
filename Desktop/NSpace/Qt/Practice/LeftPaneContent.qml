@@ -68,6 +68,12 @@ ColumnLayout {
             Item {
                 Layout.fillHeight: true
             }
+            Item {
+                anchors.fill: parent
+
+                DragHandler {
+                }
+            }
         }
     }
 }
