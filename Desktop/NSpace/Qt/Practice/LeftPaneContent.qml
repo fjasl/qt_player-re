@@ -35,9 +35,21 @@ ColumnLayout {
         }
     }
     Rectangle {
+        id: leftFunContainer
+
+        property color activeColor: "#00ffff"
+        property int currentActiveIndex: 0
+        property var navButtons: [btnPlay, btnLyric, btnList, btnSetting]
+
         Layout.fillWidth: true
         Layout.preferredHeight: parent.height * 0.75
         color: "transparent"
+
+        Item {
+            anchors.fill: parent
+
+            DragHandler {}
+        }
 
         ColumnLayout {
             anchors.fill: parent
@@ -50,30 +62,54 @@ ColumnLayout {
             }
 
             LeftNavButton {
+                id: btnPlay
                 source: "qrc:/icon/icons/awefont/play-solid.svg"
+                overlaycolor: leftFunContainer.activeColor
+                onClicked: leftFunContainer.activateButton(0)
             }
 
             LeftNavButton {
+                id: btnLyric
                 source: "qrc:/icon/icons/awefont/file-lines-solid.svg"
+                overlaycolor: leftFunContainer.activeColor
+                onClicked: leftFunContainer.activateButton(1)
             }
 
             LeftNavButton {
+                id: btnList
                 source: "qrc:/icon/icons/awefont/list-ul-solid.svg"
+                overlaycolor: leftFunContainer.activeColor
+                onClicked: leftFunContainer.activateButton(2)
             }
 
             LeftNavButton {
+                id: btnSetting
                 source: "qrc:/icon/icons/awefont/gear-solid.svg"
+                overlaycolor: leftFunContainer.activeColor
+                onClicked: leftFunContainer.activateButton(3)
             }
             // 3. 底部占位符
             Item {
                 Layout.fillHeight: true
             }
-            Item {
-                anchors.fill: parent
+        }
+        // 统一激活逻辑函数
+        function activateButton(index) {
+            // 设置当前激活索引
+            currentActiveIndex = index
 
-                DragHandler {
-                }
+            // 遍历所有按钮，只激活对应的那个
+            for (var i = 0; i < navButtons.length; i++) {
+                navButtons[i].overlayvisible = (i === index)
             }
+
+            // 可选：在这里发出信号通知外部页面切换
+            // root.pageChanged(index);
+        }
+
+        // 初始化时激活默认项
+        Component.onCompleted: {
+            activateButton(currentActiveIndex)
         }
     }
 }
