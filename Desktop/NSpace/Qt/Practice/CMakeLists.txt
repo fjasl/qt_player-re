@@ -24,6 +24,9 @@ qt_add_qml_module(appPractice
         QML_FILES RightSettingPage.qml
         QML_FILES RightListPage.qml
         QML_FILES RightLyricPage.qml
+        QML_FILES RightNavButton.qml
+        QML_FILES RightPlayerWidgetFuncButton.qml
+        QML_FILES RightPlayerControlButton.qml
        )
 
 

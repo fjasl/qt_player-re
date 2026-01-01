@@ -46,7 +46,9 @@ ApplicationWindow {
                         radius: 16
                         color: "black"
                         Layout.fillHeight: true
-                        Layout.preferredWidth: parent.width * 0.10
+                        Layout.fillWidth: true
+                        //Layout.preferredWidth: parent.width * 0.10
+                        Layout.preferredWidth: 10
                         // Layout.fillWidth: true + preferredWidth 也可以，但这里直接用比例更直观
                         LeftPaneContent {}
                     }
@@ -57,7 +59,9 @@ ApplicationWindow {
                         radius: 16
                         color: "black"
                         Layout.fillHeight: true
-                        Layout.preferredWidth: parent.width * 0.88 // 明确指定 88%
+                        Layout.fillWidth: true
+                        //Layout.preferredWidth: parent.width * 0.88 // 明确指定 88%
+                        Layout.preferredWidth: 88
                         RightPaneContent{
                             id:rightContent
 
