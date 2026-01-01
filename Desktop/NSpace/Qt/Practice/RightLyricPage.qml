@@ -1,9 +1,17 @@
 import QtQuick
 
-Rectangle{
+Rectangle {
     width: parent.width
-    height: parent.height*0.25
+    height: parent.height * 0.25
     anchors.top: parent.top
-    anchors.topMargin: parent.height*0.25;
-    color: "#7cfc00"
+    anchors.topMargin: parent.height * 0.25
+    color: "transparent"
+
+    Text {
+        text: "Lyric View"
+        anchors.centerIn: parent
+        font.pointSize: 24
+        font.bold: true
+        color: "white"
+    }
 }
