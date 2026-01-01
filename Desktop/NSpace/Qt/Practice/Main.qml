@@ -49,7 +49,6 @@ ApplicationWindow {
                         Layout.preferredWidth: parent.width * 0.10
                         // Layout.fillWidth: true + preferredWidth 也可以，但这里直接用比例更直观
                         LeftPaneContent {}
-
                     }
 
                     // 中间 88%
@@ -59,17 +58,19 @@ ApplicationWindow {
                         color: "black"
                         Layout.fillHeight: true
                         Layout.preferredWidth: parent.width * 0.88 // 明确指定 88%
+                        RightPaneContent{
+                            id:rightContent
+
+                        }
+
                         Item {
                             anchors.fill: parent
 
-                            DragHandler {
-                            }
+                            DragHandler {}
                         }
                     }
                 }
             }
         }
     }
-
-
 }

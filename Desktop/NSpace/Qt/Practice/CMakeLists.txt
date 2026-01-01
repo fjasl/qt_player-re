@@ -18,8 +18,12 @@ qt_add_qml_module(appPractice
         QML_FILES RoundCornorContainer.qml
         QML_FILES LeftPaneContent.qml
         QML_FILES LeftNavButton.qml
+        QML_FILES RightPaneContent.qml
+        QML_FILES RightPlayerPage.qml
         RESOURCES res.qrc
-
+        QML_FILES RightSettingPage.qml
+        QML_FILES RightListPage.qml
+        QML_FILES RightLyricPage.qml
        )
 
 

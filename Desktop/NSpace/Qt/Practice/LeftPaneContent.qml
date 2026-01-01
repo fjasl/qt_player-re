@@ -19,12 +19,6 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.preferredHeight: parent.height * 0.25
         color: "transparent"
-        // Image {
-        //         anchors.centerIn: parent
-        //         width: parent.width
-        //         height: parent.height
-        //         source: "logo.svg"
-        // }
         Text {
             anchors.centerIn: parent
             text: "yun"
@@ -37,7 +31,7 @@ ColumnLayout {
     Rectangle {
         id: leftFunContainer
 
-        property color activeColor: "#00ffff"
+        property color activeColor: "#00ced1"
         property int currentActiveIndex: 0
         property var navButtons: [btnPlay, btnLyric, btnList, btnSetting]
 
@@ -105,6 +99,7 @@ ColumnLayout {
 
             // 可选：在这里发出信号通知外部页面切换
             // root.pageChanged(index);
+            rightContent.switchTo(index)
         }
 
         // 初始化时激活默认项
