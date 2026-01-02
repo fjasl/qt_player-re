@@ -1,0 +1,64 @@
+<RCC>
+    <qresource prefix="/tray">
+        <file>icons/tray/icon.ico</file>
+        <file>icons/tray/icon.png</file>
+    </qresource>
+    <qresource prefix="/icon">
+        <file>icons/light/list-music_white.svg</file>
+        <file>icons/light/play_white.svg</file>
+        <file>icons/light/scroll-text_white.svg</file>
+        <file>icons/light/settings_white.svg</file>
+        <file>icons/light/setting/blocks_white.svg</file>
+        <file>icons/light/setting/book_white.svg</file>
+        <file>icons/light/setting/info_white.svg</file>
+        <file>icons/light/setting/message-square-warning_white.svg</file>
+        <file>icons/light/setting/wrench_white.svg</file>
+        <file>icons/light/player/chevron-left_white.svg</file>
+        <file>icons/light/player/heart_white.svg</file>
+        <file>icons/light/player/pause_white.svg</file>
+        <file>icons/light/player/play_white.svg</file>
+        <file>icons/light/player/skip-back_white.svg</file>
+        <file>icons/light/player/skip-forward_white.svg</file>
+        <file>icons/light/player/volume_white.svg</file>
+        <file>icons/light/player/volume-1_white.svg</file>
+        <file>icons/light/player/volume-2_white.svg</file>
+        <file>icons/light/player/volume-x_white.svg</file>
+        <file>icons/light/list/file-music_white.svg</file>
+        <file>icons/light/list/locate-fixed_white.svg</file>
+        <file>icons/light/list/music_white.svg</file>
+        <file>icons/light/list/music-2_white.svg</file>
+        <file>icons/light/list/search_white.svg</file>
+        <file>icons/awefont/file-lines-solid.svg</file>
+        <file>icons/awefont/gear-solid.svg</file>
+        <file>icons/awefont/list-ul-solid.svg</file>
+        <file>icons/awefont/play-solid.svg</file>
+        <file>icons/awefont/list/file-contract-solid.svg</file>
+        <file>icons/awefont/list/file-solid.svg</file>
+        <file>icons/awefont/list/folder-open-solid.svg</file>
+        <file>icons/awefont/list/location-crosshairs-solid.svg</file>
+        <file>icons/awefont/list/magnifying-glass-solid.svg</file>
+        <file>icons/awefont/list/music-solid.svg</file>
+        <file>icons/awefont/list/trash-solid.svg</file>
+        <file>icons/awefont/player/backward-step-solid.svg</file>
+        <file>icons/awefont/player/chevron-left-solid.svg</file>
+        <file>icons/awefont/player/file-lines-solid.svg</file>
+        <file>icons/awefont/player/forward-step-solid.svg</file>
+        <file>icons/awefont/player/heart-regular.svg</file>
+        <file>icons/awefont/player/heart-solid.svg</file>
+        <file>icons/awefont/player/pause-solid.svg</file>
+        <file>icons/awefont/player/repeat-solid.svg</file>
+        <file>icons/awefont/player/shuffle-solid.svg</file>
+        <file>icons/awefont/player/volume-high-solid.svg</file>
+        <file>icons/awefont/player/volume-low-solid.svg</file>
+        <file>icons/awefont/player/volume-off-solid.svg</file>
+        <file>icons/awefont/player/volume-xmark-solid.svg</file>
+        <file>icons/awefont/setting/circle-info-solid.svg</file>
+        <file>icons/awefont/setting/code-solid.svg</file>
+        <file>icons/awefont/setting/info-solid.svg</file>
+        <file>icons/awefont/setting/puzzle-piece-solid.svg</file>
+        <file>icons/awefont/setting/wrench-solid.svg</file>
+    </qresource>
+    <qresource prefix="/font">
+        <file>font/segoesc.ttf</file>
+    </qresource>
+</RCC>
