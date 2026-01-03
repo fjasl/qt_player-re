@@ -12,26 +12,35 @@ qt_add_executable(appPractice
     main.cpp
 )
 
+
+
+
+# source_group("Source Files/LeftPane" FILES ${LEFT_PANE_FILES})
+# source_group("Source Files/RightPane" FILES ${RIGHT_PANE_FILES})
+# source_group("Source Files/Other" FILES ${OTHER_QML_FILES})
+
 qt_add_qml_module(appPractice
     URI Practice
-        QML_FILES Main.qml
-        QML_FILES RoundCornorContainer.qml
-        QML_FILES LeftPaneContent.qml
-        QML_FILES LeftNavButton.qml
-        QML_FILES RightPaneContent.qml
-        QML_FILES RightPlayerPage.qml
-        RESOURCES res.qrc
-        QML_FILES RightSettingPage.qml
-        QML_FILES RightListPage.qml
-        QML_FILES RightLyricPage.qml
-        QML_FILES RightPlayerFunButton.qml
-        QML_FILES RightPlayerWidgetFuncButton.qml
-        QML_FILES RightPlayerControlButton.qml
-        QML_FILES RightPlayerWidgetProgressBar.qml
-        QML_FILES RightPlayerFunContent.qml
-        QML_FILES RightPlayerWidgetSongInfo.qml
-        QML_FILES RightPlayerWidgetFunContent.qml
-        QML_FILES RightPlayerWidgetControlContent.qml
+        QML_FILES
+        Main.qml
+         RESOURCES res.qrc
+         QML_FILES
+         qml/LeftPane/LeftNavButton.qml
+         qml/LeftPane/LeftPaneContent.qml
+         qml/Other/RoundCornorContainer.qml
+         qml/RightPane/PlayerView/RightListPage.qml
+         qml/RightPane/PlayerView/RightLyricPage.qml
+         qml/RightPane/PlayerView/RightPaneContent.qml
+         qml/RightPane/PlayerView/RightPlayerControlButton.qml
+         qml/RightPane/PlayerView/RightPlayerFunButton.qml
+         qml/RightPane/PlayerView/RightPlayerFunContent.qml
+         qml/RightPane/PlayerView/RightPlayerPage.qml
+         qml/RightPane/PlayerView/RightPlayerWidgetControlContent.qml
+         qml/RightPane/PlayerView/RightPlayerWidgetFuncButton.qml
+         qml/RightPane/PlayerView/RightPlayerWidgetFunContent.qml
+         qml/RightPane/PlayerView/RightPlayerWidgetProgressBar.qml
+         qml/RightPane/PlayerView/RightPlayerWidgetSongInfo.qml
+         qml/RightPane/PlayerView/RightSettingPage.qml
        )
 
 

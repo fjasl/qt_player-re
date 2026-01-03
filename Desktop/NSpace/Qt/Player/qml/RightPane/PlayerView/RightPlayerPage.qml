@@ -110,6 +110,13 @@ Item {
                             Layout.preferredHeight: 1
                             RightPlayerWidgetProgressBar{
                                 id: progressBar
+                                onSeekRequested: (percent) => {
+                                        if (player.duration > 0) {
+                                            // 跳转播放器进度：总时长 * 比例
+                                            player.position = player.duration * percent
+                                        }
+
+                                    }
                             }
                         }
                         Item {
