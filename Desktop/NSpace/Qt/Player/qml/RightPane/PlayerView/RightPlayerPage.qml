@@ -33,18 +33,21 @@ Item {
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.PlayingState) {
                 controlContent.playBtn.source = "qrc:/icon/icons/awefont/player/pause-solid.svg"
+                discoCover.running = false
             } else {
                 controlContent.playBtn.source = "qrc:/icon/icons/awefont/play-solid.svg"
+                discoCover.running = ture
             }
         }
         onPositionChanged: {
 
             if (player.duration > 0) {
-                progressBar.fill.width = progressBar.track.width * (player.position / player.duration)
-                progressBar.positioner.text = Qt.formatTime(new Date(player.position),
-                                              "mm:ss")
-                progressBar.durationer.text = Qt.formatTime(new Date(player.duration),
-                                              "mm:ss")
+                progressBar.fill.width = progressBar.track.width
+                        * (player.position / player.duration)
+                progressBar.positioner.text = Qt.formatTime(
+                            new Date(player.position), "mm:ss")
+                progressBar.durationer.text = Qt.formatTime(
+                            new Date(player.duration), "mm:ss")
             }
         }
         onMetaDataChanged: {
@@ -53,9 +56,16 @@ Item {
             //     var key = player.metaData.keys()[i]
             //     console.log(key, ":", player.metaData.value(key))
             // }
-            songInfo.title.text = player.metaData.value(root.metaData_Title) || "未知标题"
-            songInfo.artist.text = player.metaData.value(root.metaData_ContributingArtist)[0]
-                    || "未知艺术家"
+            songInfo.title.text = player.metaData.value(
+                        root.metaData_Title) || "未知标题"
+            songInfo.artist.text = player.metaData.value(
+                        root.metaData_ContributingArtist)[0] || "未知艺术家"
+            if (player.metaData.value(root.metaData_CoverArtImage)) {
+                Connetor.dispatch("cover_request", {
+                                      "image": player.metaData.value(
+                                                   root.metaData_CoverArtImage)
+                                  })
+            }
         }
     }
 
@@ -77,8 +87,7 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.preferredWidth: 1
-                    RightPlayerFunContent{
-                    }
+                    RightPlayerFunContent {}
                 }
                 Item {
                     Layout.fillHeight: true
@@ -92,7 +101,7 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                            RightPlayerWidgetSongInfo{
+                            RightPlayerWidgetSongInfo {
                                 id: songInfo
                             }
                         }
@@ -100,45 +109,40 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                            RightPlayerWidgetFunContent{
-
-                            }
+                            RightPlayerWidgetFunContent {}
                         }
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                            RightPlayerWidgetProgressBar{
+                            RightPlayerWidgetProgressBar {
                                 id: progressBar
-                                onSeekRequested: (percent) => {
-                                        if (player.duration > 0) {
-                                            // 跳转播放器进度：总时长 * 比例
-                                            player.position = player.duration * percent
-                                        }
-
-                                    }
+                                onSeekRequested: percent => {
+                                                     if (player.duration > 0) {
+                                                         // 跳转播放器进度：总时长 * 比例
+                                                         player.position = player.duration * percent
+                                                     }
+                                                 }
                             }
                         }
                         Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                           RightPlayerWidgetControlContent{
-                               id:controlContent
-                               onPlayBtnOnClick:  {
-                                   console.log("播放按钮被点击！")
-                                   if (player.playbackState === MediaPlayer.PlayingState) {
-                                       player.pause()
-                                   } else {
-                                       player.play()
-                                   }
-                               }
-                               onPrevBtnOnClick: {
-                                      Connetor.dispatch("media_prev", {})
-                               }
-
-
-                           }
+                            RightPlayerWidgetControlContent {
+                                id: controlContent
+                                onPlayBtnOnClick: {
+                                    console.log("播放按钮被点击！")
+                                    if (player.playbackState === MediaPlayer.PlayingState) {
+                                        player.pause()
+                                    } else {
+                                        player.play()
+                                    }
+                                }
+                                onPrevBtnOnClick: {
+                                    Connetor.dispatch("media_prev", {})
+                                }
+                            }
                         }
                     }
                 }
@@ -146,8 +150,8 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.preferredWidth: 4
-                    RightPlayerDiscoContent{
-
+                    RightPlayerDiscoContent {
+                        id: discoCover
                     }
                 }
             }
