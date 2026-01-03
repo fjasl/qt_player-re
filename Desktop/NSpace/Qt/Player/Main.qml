@@ -2,6 +2,9 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Effects
 import QtQuick.Layouts
+import "qml/RightPane/PlayerView"
+import "qml/LeftPane"
+import "qml/Other"
 
 //import Qt.labs.platform
 

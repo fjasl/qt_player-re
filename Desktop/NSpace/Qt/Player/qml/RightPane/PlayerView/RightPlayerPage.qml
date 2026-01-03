@@ -146,6 +146,9 @@ Item {
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                     Layout.preferredWidth: 4
+                    RightPlayerDiscoContent{
+
+                    }
                 }
             }
         }
