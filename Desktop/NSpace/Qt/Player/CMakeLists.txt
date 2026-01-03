@@ -41,6 +41,13 @@ qt_add_qml_module(appPractice
          qml/RightPane/PlayerView/RightPlayerWidgetProgressBar.qml
          qml/RightPane/PlayerView/RightPlayerWidgetSongInfo.qml
          qml/RightPane/PlayerView/RightSettingPage.qml
+         SOURCES cpp/Services/PlayerServices.cpp
+         SOURCES cpp/Services/Connector.h
+         SOURCES cpp/Services/EventBus.h
+         SOURCES cpp/Services/LogicManager.h
+         SOURCES cpp/Services/PlayerModule.cpp
+         SOURCES cpp/Services/AppLogic.cpp
+         SOURCES cpp/Services/PlayerModule.h
        )
 
 
@@ -59,6 +66,11 @@ target_link_libraries(appPractice
     PRIVATE Qt6::Quick
     Qt6::Widgets
     Qt6::LabsPlatformplugin
+)
+
+target_include_directories(appPractice PRIVATE
+    cpp/Services
+    # 如果还有其他目录，继续加
 )
 
 include(GNUInstallDirs)
