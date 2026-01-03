@@ -33,10 +33,10 @@ Item {
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.PlayingState) {
                 controlContent.playBtn.source = "qrc:/icon/icons/awefont/player/pause-solid.svg"
-                discoCover.running = false
+                discoCover.startRotation()
             } else {
                 controlContent.playBtn.source = "qrc:/icon/icons/awefont/play-solid.svg"
-                discoCover.running = ture
+                discoCover.stopRotation()
             }
         }
         onPositionChanged: {
