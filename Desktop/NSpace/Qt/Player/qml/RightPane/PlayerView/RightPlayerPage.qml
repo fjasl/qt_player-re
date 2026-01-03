@@ -133,6 +133,11 @@ Item {
                                        player.play()
                                    }
                                }
+                               onPrevBtnOnClick: {
+                                      Connetor.dispatch("media_prev", {})
+                               }
+
+
                            }
                         }
                     }

@@ -10,6 +10,20 @@ RowLayout {
     signal prevBtnOnClick();
     property alias nextBtn: nextButton
     signal nextBtnOnClick();
+
+
+    Connections {
+           target: EventBus // 这里的 EventBus 是你在 C++ setContextProperty 注入的名称
+
+           // 使用 Qt 6 推荐的 function 语法
+           function onBackendEvent(event, payload) {
+               if (event === "test") {
+                   console.log("prev clicked 这里是响应")
+               }
+           }
+       }
+
+
     anchors.fill: parent
     spacing: parent.height
     RightPlayerControlButton {

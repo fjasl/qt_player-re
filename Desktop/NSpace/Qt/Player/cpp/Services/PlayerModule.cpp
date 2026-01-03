@@ -28,5 +28,12 @@ void PlayerModule::init() {
 
         EventBus::instance().emitEvent("player_cmd", payload);
     });
+
+    sm.registerHandler("media_prev", "prev_button_click", [](const QVariantMap& data, const Context& ctx) {
+        qDebug() << "后端收到prev button 点击信号";
+
+
+        EventBus::instance().emitEvent("test", {});
+    });
 }
 
