@@ -5,6 +5,7 @@ import QtQuick.Controls
 Rectangle {
     id: root
     signal trashBtnClick(int itemIndex)
+    signal inputTextChanged(string text)
     width: scrollableList.width
     height: scrollableList.height * 0.2
     color: "transparent"
@@ -76,6 +77,7 @@ Rectangle {
                         color: "transparent" // 背景透明
                         border.color: "transparent" // 彻底去除边框
                     }
+                onTextChanged: root.inputTextChanged(text)
             }
         }
     }

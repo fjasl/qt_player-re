@@ -23,49 +23,98 @@ Item {
         }
     }
 
+    function filterItems(searchText) {
+        var term = searchText.toLowerCase()
+        for (var i = 0; i < visualModel.items.count; i++) {
+            var data = visualModel.items.get(i).model
+            // 搜索框项始终可见
+            if (data.searchBar === true) {
+                visualModel.items.get(i).inVisibleItems = true
+            } else {
+                // 根据 name 字段过滤
+                var isMatch = data.name.toLowerCase().indexOf(term) !== -1
+                visualModel.items.get(i).inVisibleItems = isMatch
+            }
+        }
+    }
+
+    ListModel {
+        id: listItem
+        dynamicRoles: true
+        Component.onCompleted: {
+            for (var i = 0; i < 20; i++)
+                append({
+                           "searchBar": false,
+                           "name": "项目 " + i
+                       })
+        }
+    }
+
+    // 2. 视觉代理模型（负责过滤）
+    DelegateModel {
+        id: visualModel
+        model: listItem
+        filterOnGroup: "visibleItems" // 只显示属于此组的项
+
+        groups: [
+            DelegateModelGroup {
+                id: visibleItemsGroup
+                name: "visibleItems"
+                includeByDefault: true // 初始全部加入此组
+            }
+        ]
+
+        delegate: DelegateChooser {
+            role: "searchBar"
+            DelegateChoice {
+                roleValue: true
+                // 转发搜索文字变化信号
+                delegate: RightListItemSearchBar {
+                    onInputTextChanged: text => root.filterItems(text)
+                }
+            }
+            DelegateChoice {
+                roleValue: false
+                delegate: RightListItemContent {
+                    // 注意：在 DelegateModel 中删除需要使用原模型索引
+                    onTrashBtnClick: listItem.remove(index)
+                }
+            }
+        }
+    }
+
     ListView {
         id: scrollableList // 必须定义 ID 供 delegate 引用
         anchors.fill: parent
         clip: true
 
         // 关键点 1：必须有数据模型
-        model: ListModel {
-            id: listItem
-            dynamicRoles: true
-            Component.onCompleted: {
-                // 初始化一些演示数据
-                for (var i = 0; i < 5; i++)
-                    append({
-                               "searchBar": false,
-                               "name": "项目 " + i
-                           })
-            }
-        }
+        model: visualModel
 
-        delegate: DelegateChooser {
-            id: chooser
-            role: "searchBar" // 检查模型中的 searchBar 属性
+        // delegate: DelegateChooser {
+        //     id: chooser
+        //     role: "searchBar" // 检查模型中的 searchBar 属性
 
-            // 选项 1：搜索框 (当 searchBar == true 时)
-            DelegateChoice {
-                roleValue: true
-                delegate: RightListItemSearchBar {// 可以在这里添加 searchBar 的特有逻辑
-                }
-            }
+        //     // 选项 1：搜索框 (当 searchBar == true 时)
+        //     DelegateChoice {
+        //         roleValue: true
+        //         delegate: RightListItemSearchBar {// 可以在这里添加 searchBar 的特有逻辑
+        //         }
+        //     }
 
-            // 选项 2：普通项 (默认项，不设置 roleValue)
-            DelegateChoice {
-                roleValue: false
-                // 不写 roleValue 意味着它是 fallback（保底选项）
-                delegate: RightListItemContent {
-                    // 这里可以直接使用 index
-                    onTrashBtnClick: {
-                        console.log("正在移除索引:", index)
-                        listItem.remove(index)
-                    }
-                }
-            }
-        }
+        //     // 选项 2：普通项 (默认项，不设置 roleValue)
+        //     DelegateChoice {
+        //         roleValue: false
+        //         // 不写 roleValue 意味着它是 fallback（保底选项）
+        //         delegate: RightListItemContent {
+        //             // 这里可以直接使用 index
+        //             onTrashBtnClick: {
+        //                 console.log("正在移除索引:", index)
+        //                 listItem.remove(index)
+        //             }
+        //         }
+        //     }
+        // }
 
         // 选配：设置滚动条（QtQuick.Controls 模块提供）
         ScrollBar.vertical: ScrollBar {
