@@ -26,6 +26,31 @@ Item {
             highLight(indexList[1])
         }
     }
+    function updateFromSearchBar() {
+        if (root.isSearchBarOn) {
+            var tempArrayP = [...indexList]
+
+            // 2. 遍历自增
+            for (var i = 0; i < tempArrayP.length; i++) {
+                tempArrayP[i] += 1
+            }
+
+            // 3. 写回属性
+            // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
+            indexList = tempArrayP
+        } else if (!root.isSearchBarOn) {
+            var tempArrayD = [...indexList]
+
+            // 2. 遍历自增
+            for (var i = 0; i < tempArrayD.length; i++) {
+                tempArrayD[i] -= 1
+            }
+
+            // 3. 写回属性
+            // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
+            indexList = tempArrayD
+        }
+    }
 
     function highLight(index) {
         if (index < 0 || index >= listItem.count)
@@ -51,6 +76,7 @@ Item {
             }
             listItem.remove(0) // 如果有，就移除它
             root.isSearchBarOn = false
+            root.updateFromSearchBar();
         } else {
             //console.log("搜索框不存在，执行添加...")
             listItem.insert(0, {
@@ -61,6 +87,7 @@ Item {
             scrollableList.positionViewAtBeginning()
             //scrollableList.contentY = -scrollableList.height * 0.2
             root.isSearchBarOn = true
+            root.updateFromSearchBar();
         }
     }
 
