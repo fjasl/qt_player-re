@@ -6,6 +6,8 @@ Item {
     id: root
     property alias source: innerImage.source
 
+    //signal clicked() ;
+
     Layout.preferredWidth: parent.width * 0.5
     Layout.preferredHeight: parent.height * 0.125
     Layout.alignment: Qt.AlignHCenter
@@ -47,6 +49,6 @@ Item {
         // onClicked: {
         //     root.overlayvisible = !root.overlayvisible
         // }
-        onClicked: root.clicked()
+        //onClicked: root.clicked()
     }
 }

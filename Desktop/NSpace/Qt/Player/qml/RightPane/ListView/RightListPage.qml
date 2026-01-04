@@ -18,6 +18,9 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 1
                 RightListFunContent{
+                    onSearchBtnClicked:{
+                        listContent.toggleSearchBar() // 改为调用切换函数
+                    }
 
                 }
             }
@@ -26,7 +29,9 @@ Item {
                 Layout.fillWidth: true
                 Layout.preferredWidth: 9
                 RightListListContent{
+                    id: listContent
                 }
+
             }
         }
     }
