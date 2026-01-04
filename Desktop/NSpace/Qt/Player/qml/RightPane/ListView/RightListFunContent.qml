@@ -4,6 +4,7 @@ import QtQuick.Layouts
 ColumnLayout{
     id: root
     signal searchBtnClicked()
+    signal locateBtnClicked()
     anchors.fill: parent
     spacing: parent.height * 0.05
     RightListFunButton{
@@ -19,6 +20,11 @@ ColumnLayout{
     }
     RightListFunButton{
         source:"qrc:/icon/icons/awefont/list/location-crosshairs-solid.svg"
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.locateBtnClicked()
+        }
     }
     Item{
         Layout.fillHeight: true

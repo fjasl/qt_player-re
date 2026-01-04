@@ -4,23 +4,101 @@ import Qt.labs.qmlmodels
 
 Item {
     id: root
-    // 必须确保这个容器填充父级布局分配的空间
     anchors.fill: parent
+    // 必须确保这个容器填充父级布局分配的空间
+    property int currentInt: -1
+    property int activeInt: -1
+    property bool isSearchBarOn: false
+    property list<int> indexList: []
+
+    function activeItem(index) {
+        if (indexList.length === 0) {
+            indexList.push(index)
+            highLight(indexList[0])
+        } else if (indexList.length === 1) {
+            indexList.push(index)
+            unHighLight(indexList[0])
+            highLight(indexList[1])
+        } else {
+            indexList.push(index)
+            indexList.splice(0, 1)
+            unHighLight(indexList[0])
+            highLight(indexList[1])
+        }
+    }
+
+    function highLight(index) {
+        if (index < 0 || index >= listItem.count)
+            return
+        // 使用 setProperty 修改数据，ListView 会自动通知对应的 Delegate 更新
+        listItem.setProperty(index, "onActive", true)
+    }
+
+    function unHighLight(index) {
+        if (index < 0 || index >= listItem.count)
+            return
+        // 使用 setProperty 修改数据，ListView 会自动通知对应的 Delegate 更新
+        listItem.setProperty(index, "onActive", false)
+    }
 
     function toggleSearchBar() {
+
         // 1. 检查第一项是否是搜索框
         if (listItem.count > 0 && listItem.get(0).searchBar === true) {
-            console.log("搜索框已存在，执行移除...")
+            //console.log("搜索框已存在，执行移除...")
+            for (var i = 0; i < visualModel.items.count; i++) {
+                visualModel.items.get(i).inVisibleItems = true
+            }
             listItem.remove(0) // 如果有，就移除它
+            root.isSearchBarOn = false
         } else {
-            console.log("搜索框不存在，执行添加...")
+            //console.log("搜索框不存在，执行添加...")
             listItem.insert(0, {
                                 "searchBar": true,
                                 "name": "搜索框"
                             })
             // 滚动到顶部确保可见
             scrollableList.positionViewAtBeginning()
+            //scrollableList.contentY = -scrollableList.height * 0.2
+            root.isSearchBarOn = true
         }
+    }
+
+    function scrollToCurrent() {
+        if (currentInt < 0 || currentInt >= listItem.count)
+            return
+
+        activeItem(currentInt)
+
+        // 1. 获取基础参数
+        var itemHeight = scrollableList.height * 0.2
+        var viewHeight = scrollableList.height
+
+        // 2. 检查内容是否填满一屏
+        // 注意：contentHeight 建议在渲染帧更新后再读取，这里加上 originY 修正
+        if (scrollableList.contentHeight <= viewHeight) {
+            scrollableList.contentY = scrollableList.originY // 修正点：使用 originY
+            return
+        }
+
+        // 3. 计算理想目标位置
+        // targetY 应该是相对于 originY 的偏移量
+        var targetY = scrollableList.originY + (currentInt * itemHeight)
+
+        // 如果 SearchBar 开启，且它在原始模型索引 0 的位置（导致后面项下移）
+        if (root.isSearchBarOn) {
+            targetY += itemHeight
+        }
+
+        // 4. 计算最大允许滚动值
+        // maxScrollY 也必须基于 originY
+        var maxScrollY = scrollableList.originY + Math.max(
+                    0, scrollableList.contentHeight - viewHeight)
+
+        // 5. 最终赋值
+        // Math.max(scrollableList.originY, ...) 确保不会滚过头露出上方空白
+        scrollableList.contentY = Math.max(scrollableList.originY,
+                                           Math.min(targetY, maxScrollY))
     }
 
     function filterItems(searchText) {
@@ -45,7 +123,9 @@ Item {
             for (var i = 0; i < 20; i++)
                 append({
                            "searchBar": false,
-                           "name": "项目 " + i
+                           "name": "项目 " + i,
+                           "onActive": false,
+                           "text": i
                        })
         }
     }
@@ -75,9 +155,19 @@ Item {
             }
             DelegateChoice {
                 roleValue: false
+
                 delegate: RightListItemContent {
                     // 注意：在 DelegateModel 中删除需要使用原模型索引
+                    text: model.text
+                    onactive: model.onActive
                     onTrashBtnClick: listItem.remove(index)
+                    onItemClicked: {
+                        root.activeItem(index)
+                    }
+                    onItemDoubleClicked: {
+                        root.activeItem(index)
+                        root.currentInt = index
+                    }
                 }
             }
         }
@@ -90,31 +180,6 @@ Item {
 
         // 关键点 1：必须有数据模型
         model: visualModel
-
-        // delegate: DelegateChooser {
-        //     id: chooser
-        //     role: "searchBar" // 检查模型中的 searchBar 属性
-
-        //     // 选项 1：搜索框 (当 searchBar == true 时)
-        //     DelegateChoice {
-        //         roleValue: true
-        //         delegate: RightListItemSearchBar {// 可以在这里添加 searchBar 的特有逻辑
-        //         }
-        //     }
-
-        //     // 选项 2：普通项 (默认项，不设置 roleValue)
-        //     DelegateChoice {
-        //         roleValue: false
-        //         // 不写 roleValue 意味着它是 fallback（保底选项）
-        //         delegate: RightListItemContent {
-        //             // 这里可以直接使用 index
-        //             onTrashBtnClick: {
-        //                 console.log("正在移除索引:", index)
-        //                 listItem.remove(index)
-        //             }
-        //         }
-        //     }
-        // }
 
         // 选配：设置滚动条（QtQuick.Controls 模块提供）
         ScrollBar.vertical: ScrollBar {
@@ -165,6 +230,12 @@ Item {
                 property: "x"
                 to: -scrollableList.width // 向左滑出
                 duration: 300
+            }
+        }
+        Behavior on contentY {
+            NumberAnimation {
+                duration: 400
+                easing.type: Easing.OutCubic
             }
         }
     }

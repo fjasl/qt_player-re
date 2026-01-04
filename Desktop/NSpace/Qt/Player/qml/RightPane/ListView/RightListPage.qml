@@ -19,7 +19,10 @@ Item {
                 Layout.preferredWidth: 1
                 RightListFunContent{
                     onSearchBtnClicked:{
-                        listContent.toggleSearchBar() // 改为调用切换函数
+                        listContent.toggleSearchBar()
+                    }
+                    onLocateBtnClicked:{
+                        listContent.scrollToCurrent()
                     }
 
                 }
@@ -30,6 +33,7 @@ Item {
                 Layout.preferredWidth: 9
                 RightListListContent{
                     id: listContent
+
                 }
 
             }

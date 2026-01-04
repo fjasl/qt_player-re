@@ -4,9 +4,25 @@ import QtQuick.Layouts
 Rectangle {
     id: root
     signal trashBtnClick(int itemIndex)
+    signal itemClicked
+    signal itemDoubleClicked
+    property alias text: itemText.text
+    property bool onactive: false
+
+    // Binding {
+    //     target: root
+    //     property: "onactive"
+    //     value: model.onActive
+    // }
+
     width: scrollableList.width
     height: scrollableList.height * 0.2
-    color: "transparent"
+    color: root.onactive ? Qt.rgba(
+                               255, 255, 255,
+                               0.2) : (hoverArea.containsMouse ? Qt.rgba(
+                                                                     255, 255,
+                                                                     255,
+                                                                     0.1) : "transparent")
     // 2. 缩放中心默认是中心
     scale: hoverArea.pressed ? 0.9 : (hoverArea.containsMouse ? 0.95 : 1.0)
 
@@ -27,9 +43,9 @@ Rectangle {
         id: hoverArea
         anchors.fill: parent
         hoverEnabled: true // 必须开启
-        onEntered: color = Qt.rgba(255, 255, 255, 0.2) // 悬停变色
-        onExited: color = "transparent" // 离开恢复
         cursorShape: Qt.PointingHandCursor
+        onClicked: root.itemClicked()
+        onDoubleClicked: root.itemDoubleClicked()
     }
     // 上边框
     Rectangle {
@@ -54,6 +70,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.preferredWidth: 32
             Text {
+                id: itemText
                 text: "这里是一个演示"
                 anchors.verticalCenter: parent.verticalCenter
                 // 水平靠左
