@@ -10,6 +10,7 @@
 #include <QQuickWindow>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QQuickStyle>
 
 #include "Connector.h"
 #include "EventBus.h"
@@ -19,9 +20,12 @@
 
 int main(int argc, char *argv[])
 {
+
+    QQuickStyle::setStyle("Fusion");
     // 1. 必须用 QApplication 以支持原生菜单
     QApplication app(argc, argv);
     app.setQuitOnLastWindowClosed(false);
+
 
 
     // 2. 初始化 C++ 业务逻辑模块 (注册 Handler)

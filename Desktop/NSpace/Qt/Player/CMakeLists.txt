@@ -5,7 +5,7 @@ project(Practice VERSION 0.1 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt6 REQUIRED COMPONENTS Quick Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2)
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appPractice
@@ -28,8 +28,6 @@ qt_add_qml_module(appPractice
          qml/LeftPane/LeftNavButton.qml
          qml/LeftPane/LeftPaneContent.qml
          qml/Other/RoundCornorContainer.qml
-         qml/RightPane/PlayerView/RightListPage.qml
-         qml/RightPane/PlayerView/RightLyricPage.qml
          qml/RightPane/PlayerView/RightPaneContent.qml
          qml/RightPane/PlayerView/RightPlayerControlButton.qml
          qml/RightPane/PlayerView/RightPlayerFunButton.qml
@@ -40,7 +38,13 @@ qt_add_qml_module(appPractice
          qml/RightPane/PlayerView/RightPlayerWidgetFunContent.qml
          qml/RightPane/PlayerView/RightPlayerWidgetProgressBar.qml
          qml/RightPane/PlayerView/RightPlayerWidgetSongInfo.qml
-         qml/RightPane/PlayerView/RightSettingPage.qml
+         qml/RightPane/ListView/RightListFunButton.qml
+         qml/RightPane/ListView/RightListFunContent.qml
+         qml/RightPane/ListView/RightListItemContent.qml
+         qml/RightPane/ListView/RightListListContent.qml
+         qml/RightPane/ListView/RightListPage.qml
+         qml/RightPane/LyricView/RightLyricPage.qml
+         qml/RightPane/SettingView/RightSettingPage.qml
          SOURCES cpp/Services/PlayerServices.cpp
          SOURCES cpp/Services/Connector.h
          SOURCES cpp/Services/EventBus.h
@@ -70,6 +74,7 @@ set_target_properties(appPractice PROPERTIES
 target_link_libraries(appPractice
     PRIVATE Qt6::Quick
     Qt6::Widgets
+    Qt6::QuickControls2
     Qt6::LabsPlatformplugin
 )
 
