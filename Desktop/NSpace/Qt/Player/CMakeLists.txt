@@ -41,6 +41,7 @@ qt_add_qml_module(appPractice
          qml/RightPane/ListView/RightListFunButton.qml
          qml/RightPane/ListView/RightListFunContent.qml
          qml/RightPane/ListView/RightListItemContent.qml
+         qml/RightPane/ListView/RightListItemIcon.qml
          qml/RightPane/ListView/RightListListContent.qml
          qml/RightPane/ListView/RightListPage.qml
          qml/RightPane/LyricView/RightLyricPage.qml

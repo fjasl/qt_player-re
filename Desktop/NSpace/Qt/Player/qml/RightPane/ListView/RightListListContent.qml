@@ -11,46 +11,27 @@ Item {
         clip: true
 
         // 关键点 1：必须有数据模型
-        model: 20
-
-        // delegate: Item {
-        //     // 关键点 2：使用上面定义的 ID
-        //     width: scrollableList.width
-        //     height: scrollableList.height * 0.2
-
-        //     Rectangle {
-        //         anchors.fill: parent
-        //         anchors.margins: 2
-        //         color: "white"
-        //         border.color: "#ccc"
-        //         radius: 4
-
-        //         Text {
-        //             anchors.centerIn: parent
-        //             text: "Item " + index
-        //         }
-        //     }
-        // }
+        model: ListModel {
+            id: listItem
+            Component.onCompleted: {
+                // 初始化一些演示数据
+                for (var i = 0; i < 20; i++)
+                    append({
+                               "name": "项目 " + i
+                           })
+            }
+        }
         delegate: RightListItemContent {
-            Item {
-                anchors.fill: parent
-                anchors.margins: 2
-
-                // color: "white"
-                // border.color: "#ccc"
-                //radius: 4
-                Text {
-                    anchors.centerIn: parent
-                    text: "Item " + index
-                    color: "white"
-                }
+            onTrashBtnClick: function (itemIndex) {
+                console.log("正在移除索引:", itemIndex)
+                listItem.remove(itemIndex)
             }
         }
 
         // 选配：设置滚动条（QtQuick.Controls 模块提供）
         ScrollBar.vertical: ScrollBar {
             id: vBar
-            active: true // 设置为 true 则始终显示，false 则滚动时才显示
+            active: false // 设置为 true 则始终显示，false 则滚动时才显示
             policy: ScrollBar.AsNeeded
 
             // 1. 自定义滑块（移动的那个部分）
@@ -73,6 +54,29 @@ Item {
             background: Rectangle {
                 implicitWidth: 6
                 color: "black" // 通常背景设为透明更好看
+            }
+        }
+
+        add: Transition {
+            NumberAnimation {
+                property: "x"
+                from: scrollableList.width // 从右侧开始
+                to: 0
+                duration: 400
+                easing.type: Easing.OutCubic
+            }
+            NumberAnimation {
+                property: "opacity"
+                from: 0
+                to: 1
+                duration: 400
+            }
+        }
+        remove: Transition {
+            NumberAnimation {
+                property: "x"
+                to: -scrollableList.width // 向左滑出
+                duration: 300
             }
         }
     }
