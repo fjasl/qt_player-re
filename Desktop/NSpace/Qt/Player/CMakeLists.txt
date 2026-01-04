@@ -49,6 +49,10 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/AppLogic.cpp
          SOURCES cpp/Services/PlayerModule.h
          QML_FILES qml/RightPane/PlayerView/RightPlayerDiscoContent.qml
+         SOURCES cpp/Services/Storage.h
+         SOURCES cpp/Services/Storage.cpp
+         SOURCES cpp/Services/StoreState.h
+         SOURCES cpp/Services/StoreState.cpp
        )
 
 
