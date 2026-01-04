@@ -92,17 +92,41 @@ Rectangle {
         color: Qt.rgba(255, 255, 255, 0.2) // 灰色，不透明
     }
     // 使用 ListView 附加属性监听移除动作
-        ListView.onRemove: SequentialAnimation {
-            // 1. 开启延迟移除，此时 ListView 不会立即回收此项
-            PropertyAction { target: root; property: "ListView.delayRemove"; value: true }
+    SequentialAnimation {
+        id: removeAnimation
 
-            // 2. 执行你的滑出动画
-            NumberAnimation { target: root; property: "x"; to: -root.width; duration: 300 }
-
-            // 3. 【核心】让高度也变为 0，这样下方的项就会随高度变化平滑上移
-            NumberAnimation { target: root; property: "height"; to: 0; duration: 200 }
-
-            // 4. 关闭延迟移除，此时该项才会被真正销毁
-            PropertyAction { target: root; property: "ListView.delayRemove"; value: false }
+        // 关键步骤：阻止立即销毁
+        PropertyAction {
+            target: root
+            property: "ListView.delayRemove"
+            value: true
         }
+
+        // 执行动画
+        NumberAnimation {
+            target: root
+            property: "x"
+            to: -root.width
+            duration: 300
+            easing.type: Easing.InCubic
+        }
+        NumberAnimation {
+            target: root
+            property: "height"
+            to: 0
+            duration: 200
+        }
+
+        // 动画结束，允许销毁
+        PropertyAction {
+            target: root
+            property: "ListView.delayRemove"
+            value: false
+        }
+    }
+
+    // 2. 信号处理器里通过脚本调用 start()
+    ListView.onRemove: {
+        removeAnimation.start()
+    }
 }
