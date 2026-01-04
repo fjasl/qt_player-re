@@ -38,6 +38,7 @@ Item {
             // 3. 写回属性
             // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
             indexList = tempArrayP
+            currentInt += 1
         } else if (!root.isSearchBarOn) {
             var tempArrayD = [...indexList]
 
@@ -49,6 +50,7 @@ Item {
             // 3. 写回属性
             // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
             indexList = tempArrayD
+            currentInt -= 1
         }
     }
 
@@ -76,7 +78,7 @@ Item {
             }
             listItem.remove(0) // 如果有，就移除它
             root.isSearchBarOn = false
-            root.updateFromSearchBar();
+            root.updateFromSearchBar()
         } else {
             //console.log("搜索框不存在，执行添加...")
             listItem.insert(0, {
@@ -87,7 +89,7 @@ Item {
             scrollableList.positionViewAtBeginning()
             //scrollableList.contentY = -scrollableList.height * 0.2
             root.isSearchBarOn = true
-            root.updateFromSearchBar();
+            root.updateFromSearchBar()
         }
     }
 
@@ -114,7 +116,7 @@ Item {
 
         // 如果 SearchBar 开启，且它在原始模型索引 0 的位置（导致后面项下移）
         if (root.isSearchBarOn) {
-            targetY += itemHeight
+            //targetY += itemHeight
         }
 
         // 4. 计算最大允许滚动值
