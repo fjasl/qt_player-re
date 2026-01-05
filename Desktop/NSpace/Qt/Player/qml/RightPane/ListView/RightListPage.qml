@@ -6,38 +6,37 @@ Item {
     height: parent.height * 0.25
     anchors.top: parent.top
     anchors.topMargin: parent.height * 0.5
-    Item{
+    Item {
         anchors.fill: parent
         anchors.topMargin: parent.width * 0.05
         anchors.bottomMargin: parent.width * 0.05
-        RowLayout{
+        RowLayout {
             anchors.fill: parent
             spacing: 0
-            Item{
+            Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: 1
-                RightListFunContent{
-                    onSearchBtnClicked:{
+                RightListFunContent {
+                    onSearchBtnClicked: {
                         listContent.toggleSearchBar()
                     }
-                    onLocateBtnClicked:{
+                    onLocateBtnClicked: {
                         listContent.scrollToCurrent()
                     }
-
+                    onOpenfileBtnClicked: {
+                        Connetor.dispatch("open_file", {})
+                    }
                 }
             }
-            Item{
+            Item {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 Layout.preferredWidth: 9
-                RightListListContent{
+                RightListListContent {
                     id: listContent
-
                 }
-
             }
         }
     }
-
 }

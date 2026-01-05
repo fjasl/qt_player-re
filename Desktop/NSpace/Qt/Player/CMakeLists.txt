@@ -59,6 +59,8 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/Storage.cpp
          SOURCES cpp/Services/StoreState.h
          SOURCES cpp/Services/StoreState.cpp
+         SOURCES cpp/Services/LifeStageModule.h
+         SOURCES cpp/Services/LifeStageModule.cpp
        )
 
 

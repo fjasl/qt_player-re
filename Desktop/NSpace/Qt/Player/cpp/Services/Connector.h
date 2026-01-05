@@ -1,4 +1,5 @@
 // StateMachine.h
+#include "StoreState.h"
 #include <QObject>
 #include <QVariantMap>
 #include <functional>
@@ -9,6 +10,7 @@
 // 定义上下文结构，模拟 Node 里的 ctx
 struct Context {
     // 可以在这里持有指向其他管理类的指针
+    AppState* appState = nullptr;
     void* storage;
     QObject* eventBus;
 };
@@ -29,6 +31,27 @@ public:
         static Connector inst;
         return inst;
     }
+
+
+    /** 设置当前使用的 AppState 实例（最常用） */
+    void setAppState(AppState* state)
+    {
+        m_context.appState = state;
+        qDebug() << "[Connector] AppState pointer set:" << (state ? "valid" : "nullptr");
+    }
+
+    /** 设置通用 storage 指针（如果你需要） */
+    void setStorage(void* storage)
+    {
+        m_context.storage = storage;
+    }
+
+    /** 设置 eventBus（如果你有 EventBus 单例） */
+    void setEventBus(QObject* bus)
+    {
+        m_context.eventBus = bus;
+    }
+
 
     /**
      * @param intent 事件意图 (例如 "media_play")
@@ -95,13 +118,13 @@ public:
             return;
         }
 
-        Context ctx { nullptr, nullptr }; // 生产环境可传入实际指针
+        // Context ctx { nullptr, nullptr }; // 生产环境可传入实际指针
 
         // 4. 按顺序执行该 intent 下的所有回调
         const QList<HandlerEntry>& entries = m_handlers[intent];
         for (const auto& entry : entries) {
             try {
-                entry.func(payload, ctx);
+                entry.func(payload, m_context);
             } catch (...) {
                 qCritical() << "[Connetor] Error executing handler:" << entry.name << "for intent:" << intent;
             }
@@ -111,6 +134,7 @@ public:
 private:
     // 数据结构：意图 -> 顺序列表(回调入口)
     QMap<QString, QList<HandlerEntry>> m_handlers;
-
+    // 统一的 Context 实例，所有 handler 共享
+    Context m_context;
     explicit Connector(QObject *parent = nullptr) : QObject(parent) {}
 };

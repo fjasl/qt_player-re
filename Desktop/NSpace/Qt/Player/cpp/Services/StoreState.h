@@ -16,6 +16,65 @@ public:
         Shuffle
     };
 
+    // ==================== 公共模板（供外部使用） ====================
+
+    // 单个歌曲轨道的默认模板（用于 playlist 中的每一项）
+    static inline const QVariantMap TrackTemplate = []() {
+        QVariantMap tmpl;
+        tmpl["path"] = "";
+        tmpl["lyric_bind"] = "";
+        tmpl["liked_count"] = -1;
+        return tmpl;
+    }();
+
+    // 当前播放轨道的默认模板
+    static inline const QVariantMap CurrentTrackTemplate = []() {
+        QVariantMap tmpl;
+        tmpl["index"] = -1;
+        tmpl["path"] = "";
+        tmpl["position"] = -1;
+        tmpl["duration"] = -1;
+        tmpl["title"] = "";
+        tmpl["artist"] = "";
+        tmpl["likedCount"] = -1;
+        tmpl["lyric_bind"] = "";
+        tmpl["cover"] = "";
+        return tmpl;
+    }();
+
+    // 上次会话恢复信息模板
+    static inline const QVariantMap LastSessionTemplate = []() {
+        QVariantMap tmpl;
+        tmpl["path"] = "";
+        tmpl["position"] = -1;
+        tmpl["play_mode"] = "single_loop";
+        tmpl["lyric_bind"] = "";
+        return tmpl;
+    }();
+
+    // 歌词数据模板
+    static inline const QVariantMap LyricTemplate = []() {
+        QVariantMap tmpl;
+        tmpl["LyricList"] = QVariantList();
+        tmpl["currentLyricRow"] = -1;
+        return tmpl;
+    }();
+
+    // 完整的初始状态模板（如果你也想暴露整个默认状态）
+    static QVariantMap defaultState() {
+        QVariantMap state;
+        state["playlist"] = QVariantList();
+        state["current_track"] = CurrentTrackTemplate;
+        state["is_playing"] = false;
+        state["play_mode"] = "single_loop";
+        state["volume"] = 0;
+        state["last_session"] = LastSessionTemplate;
+        state["Lyric"] = LyricTemplate;
+        state["settings"] = QVariantMap();
+        return state;
+    }
+
+
     AppState();
 
     // ==================== 万能通用方法 ====================
@@ -46,8 +105,10 @@ public:
     // 如果你还想暴露当前播放模式（可选）
     PlayMode currentPlayMode() const;
     void setCurrentPlayMode(PlayMode mode);
-    void mergeStates(QVariantMap& base, const QVariantMap& loaded);
+    //void mergeStates(QVariantMap& base, const QVariantMap& loaded);
+    void mergeStates(const QVariantMap& loaded);
     QVariantMap getState() const { return m_state; }
+    void recursiveMerge(QVariantMap& base, const QVariantMap& loaded);
 //==============================playlist ===========================
     /**
  * @brief 向播放列表追加歌曲

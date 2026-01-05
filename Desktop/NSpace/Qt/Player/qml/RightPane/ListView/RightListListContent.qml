@@ -15,6 +15,17 @@ Item {
     property bool isSearchBarOn: false
     property var currentVisualItems: []
 
+    Connections {
+        target: EventBus // 这里的 EventBus 是你在 C++ setContextProperty 注入的名称
+
+        // 使用 Qt 6 推荐的 function 语法
+        function onBackendEvent(event, payload) {
+            if (event === "playlist_changed") {
+                root.reloadList(payload.playlist)
+            }
+        }
+    }
+
     function activeVisualItem(vIndex, doubleClick) {
 
         var currentVisualItem = visualModel.items.get(vIndex)
@@ -115,17 +126,57 @@ Item {
         }
     }
 
+    function reloadList(tracks) {
+        // 1. 先清空现有模型
+        listItem.clear()
+
+        // 2. 安全检查
+        if (!tracks || tracks.length === 0) {
+            console.log("reloadList: tracks is empty or null")
+            return
+        }
+
+        // 3. 遍历并填充新数据
+        for (var i = 0; i < tracks.length; ++i) {
+            var track = tracks[i]
+
+            // 必须有 path，否则跳过该项
+            if (!track.hasOwnProperty("path") || track["path"] === "") {
+                console.warn("reloadList: track at index", i,
+                             "has no valid path, skipping")
+                continue
+            }
+
+            // 从路径中提取文件名（不包含扩展名或包含，根据需求调整）
+            var fullPath = track["path"]
+            var fileName = fullPath.split('/').pop(
+                        ) // 取出最后一部分：01. Hello World.mp3
+            var nameWithoutExt = fileName.replace(/\.[^.]+$/,
+                                                  "") // 去掉扩展名：01. Hello World
+
+            // 你可以自行决定是显示带扩展名的文件名还是去掉扩展名
+            // 这里我把带扩展名的作为 text，去掉扩展名的作为 name（更美观）
+            listItem.append({
+                                "searchBar": false,
+                                "name": nameWithoutExt,
+                                "text"// 显示在列表中的标题（推荐去掉扩展名）
+                                : nameWithoutExt,
+                                "onActive"// 原始文件名（保留扩展名，便于调试或其他用途）
+                                : false
+                            })
+        }
+
+        console.log("reloadList: successfully loaded", listItem.count, "tracks")
+
+        // 可选：加载完成后自动滚动到顶部或当前播放项
+        scrollableList.positionViewAtBeginning()
+    }
+
     ListModel {
         id: listItem
         dynamicRoles: true
         Component.onCompleted: {
-            for (var i = 0; i < 100; i++)
-                append({
-                           "searchBar": false,
-                           "name": "项目 " + i,
-                           "onActive": false,
-                           "text": i
-                       })
+
         }
     }
 

@@ -5,44 +5,7 @@
 
 AppState::AppState()
 {
-    // 初始化所有状态（全部放在 private 的 m_state 中）
-
-    QVariantMap trackTemplate;
-    trackTemplate["path"] = "";
-    trackTemplate["lyric_bind"] = "";
-    trackTemplate["liked_count"] = -1;
-
-    QVariantMap currentTrackTemplate;
-    currentTrackTemplate["index"] = -1;
-    currentTrackTemplate["path"] = "";
-    currentTrackTemplate["position"] = -1;
-    currentTrackTemplate["duration"] = -1;
-    currentTrackTemplate["title"] = "";
-    currentTrackTemplate["artist"] = "";
-    currentTrackTemplate["likedCount"] = -1;
-    currentTrackTemplate["lyric_bind"] = "";
-    currentTrackTemplate["cover"] = "";
-
-    QVariantMap lastSessionTemplate;
-    lastSessionTemplate["path"] = "";
-    lastSessionTemplate["position"] = -1;
-    lastSessionTemplate["play_mode"] = "single_loop";
-    lastSessionTemplate["lyric_bind"] = "";
-
-    QVariantMap lyricTemplate;
-    lyricTemplate["LyricList"] = QVariantList();
-    lyricTemplate["currentLyricRow"] = -1;
-
-    m_state = QVariantMap{
-                          {"playlist", QVariantList()},        // 初始一个空轨模板
-        {"current_track", currentTrackTemplate},
-        {"is_playing", false},
-        {"play_mode", "single_loop"},
-        {"volume", 0},
-        {"last_session", lastSessionTemplate},
-        {"Lyric", lyricTemplate},
-        {"settings", QVariantMap()}
-    };
+    m_state = defaultState();
 }
 
 // =============== 路径解析工具 ===============
@@ -284,29 +247,57 @@ void AppState::setCurrentPlayMode(PlayMode mode)
  * @param base 内存中现有的完整模板 (会被更新)
  * @param loaded 从磁盘加载的部分数据 (覆写源)
  */
-void AppState::mergeStates(QVariantMap& base, const QVariantMap& loaded) {
+// void AppState::mergeStates(QVariantMap& base, const QVariantMap& loaded) {
+//     for (auto it = loaded.constBegin(); it != loaded.constEnd(); ++it) {
+//         const QString& key = it.key();
+//         const QVariant& newValue = it.value();
+
+//         // 如果键不存在于模板中，可以选择跳过（保持模板纯净）或直接插入
+//         if (!base.contains(key)) {
+//             continue; // 按照你的需求：缺失就跳过
+//         }
+
+//         // 如果两边都是 Map，则进入递归合并
+//         if (base[key].canConvert<QVariantMap>() && newValue.canConvert<QVariantMap>()) {
+//             QVariantMap baseSubMap = base[key].toMap();
+//             mergeStates(baseSubMap, newValue.toMap());
+//             base[key] = baseSubMap;
+//         }
+//         // 如果是 List，通常建议直接替换（或者根据业务逻辑合并）
+//         else {
+//             base[key] = newValue;
+//         }
+//     }
+// }
+
+
+
+void AppState::mergeStates(const QVariantMap& loaded) {
+    // 调用内部递归函数，从根部开始合并
+    recursiveMerge(m_state, loaded);
+}
+
+// 内部辅助函数（建议放在 private 作用域）
+void AppState::recursiveMerge(QVariantMap& base, const QVariantMap& loaded) {
     for (auto it = loaded.constBegin(); it != loaded.constEnd(); ++it) {
         const QString& key = it.key();
         const QVariant& newValue = it.value();
 
-        // 如果键不存在于模板中，可以选择跳过（保持模板纯净）或直接插入
+        // 核心规则：如果 m_state 模板里没有这个键，则直接忽略（保持模板纯净）
         if (!base.contains(key)) {
-            continue; // 按照你的需求：缺失就跳过
+            continue;
         }
 
-        // 如果两边都是 Map，则进入递归合并
+        // 情况 A：两边都是 Map，递归合并
         if (base[key].canConvert<QVariantMap>() && newValue.canConvert<QVariantMap>()) {
             QVariantMap baseSubMap = base[key].toMap();
-            mergeStates(baseSubMap, newValue.toMap());
+            recursiveMerge(baseSubMap, newValue.toMap());
             base[key] = baseSubMap;
         }
-        // 如果是 List，通常建议直接替换（或者根据业务逻辑合并）
+        // 情况 B：基础类型或列表，直接用加载的数据覆盖模板默认值
         else {
             base[key] = newValue;
         }
     }
 }
-
-
-
 

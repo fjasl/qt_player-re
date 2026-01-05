@@ -27,14 +27,18 @@ int main(int argc, char *argv[])
     app.setQuitOnLastWindowClosed(false);
 
 
-
-    // 2. 初始化 C++ 业务逻辑模块 (注册 Handler)
-    // 这步必须在引擎加载 QML 之前，确保 QML 触发信号时 Handler 已就绪
-    AppLogic::initAll();
-
     AppState state;
 
-    Storage::instance().saveState(state.getState());
+    AppLogic::initAll();
+
+    QVariantMap savedState = Storage::instance().loadState();
+    //QVariantMap&& currentState = state.getState();
+    state.mergeStates(savedState);  // 递归安全合并
+
+
+
+    Connector::instance().setAppState(&state);
+    //Storage::instance().saveState(state.getState());
 
 
 
