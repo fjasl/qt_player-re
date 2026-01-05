@@ -48,6 +48,54 @@ public:
     void setCurrentPlayMode(PlayMode mode);
     void mergeStates(QVariantMap& base, const QVariantMap& loaded);
     QVariantMap getState() const { return m_state; }
+//==============================playlist ===========================
+    /**
+ * @brief 向播放列表追加歌曲
+ * @param trackData 包含歌曲信息的 Map。缺失字段将自动使用默认模板补齐
+ */
+    void appendSong(const QVariantMap& trackData = QVariantMap());
+
+    /**
+ * @brief 通过索引移除播放列表中的歌曲
+ * @param index 要移除的项索引
+ */
+    void removeSong(int index);
+    /**
+ * @brief 专用接口：获取播放列表中指定索引的歌曲对象
+ */
+    QVariantMap getSong(int index) const;
+    /**
+ * @brief 替换整个播放列表
+ * @param newList 新的歌曲列表
+ */
+    void setPlaylist(const QVariantList& newList);
+
+    /**
+ * @brief 让指定索引歌曲的点赞数 +1
+ * @param index 歌曲在播放列表中的索引
+ */
+    void incrementLikedCount(int index);
+
+//============================current_track ===================
+    /**
+ * @brief 整体更新当前播放的曲目信息
+ */
+    void setCurrentTrack(const QVariantMap& trackData);
+
+    /**
+ * @brief 更新当前播放曲目的特定属性 (如 "position", "duration")
+ */
+    void updateCurrentTrackField(const QString& field, const QVariant& value);
+//=================last_session ========================
+
+
+
+    /**
+ * @brief 从当前曲目 current_track 中提取关键信息同步到 last_session
+ * 包含：path, position, lyric_bind 等
+ */
+    void syncCurrentToLastSession();
+
 
 private:
     // ==================== 私有状态数据 ====================

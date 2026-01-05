@@ -34,7 +34,7 @@ AppState::AppState()
     lyricTemplate["currentLyricRow"] = -1;
 
     m_state = QVariantMap{
-        {"playlist", QVariantList{ trackTemplate }},        // 初始一个空轨模板
+                          {"playlist", QVariantList()},        // 初始一个空轨模板
         {"current_track", currentTrackTemplate},
         {"is_playing", false},
         {"play_mode", "single_loop"},
@@ -143,6 +143,122 @@ void AppState::set(const QString& path, const QVariant& value) {
 
     //emit stateChanged(); // 2026年标准：状态变更必须通知
 }
+//=================playlist 接口====================
+
+
+void AppState::appendSong(const QVariantMap& trackData)
+{
+    // 1. 定义标准模板（用于补齐传入 trackData 缺失的字段）
+    QVariantMap templateTrack;
+    templateTrack["path"] = "";
+    templateTrack["lyric_bind"] = "";
+    templateTrack["liked_count"] = -1;
+
+    // 2. 合并数据：以模板为底，用传入数据覆盖
+    QVariantMap finalTrack = templateTrack;
+    for (auto it = trackData.constBegin(); it != trackData.constEnd(); ++it) {
+        finalTrack[it.key()] = it.value();
+    }
+
+    // 3. 获取当前列表长度
+    QVariantList currentList = get("playlist").toList();
+    int nextIndex = currentList.size();
+
+    // 4. 利用 set 自动追加到末尾
+    // path 语法如: "playlist[0]", "playlist[1]" ...
+    set(QStringLiteral("playlist[%1]").arg(nextIndex), finalTrack);
+}
+
+void AppState::removeSong(int index)
+{
+    // 1. 获取当前的 playlist
+    QVariant listVar = get("playlist");
+    if (!listVar.canConvert<QVariantList>()) {
+        qWarning() << "AppState::removeSong: 'playlist' is not a list or does not exist.";
+        return;
+    }
+
+    QVariantList list = listVar.toList();
+
+    // 2. 边界检查
+    if (index < 0 || index >= list.size()) {
+        qWarning() << "AppState::removeSong: Index" << index << "out of range (size:" << list.size() << ")";
+        return;
+    }
+
+    // 3. 执行删除
+    list.removeAt(index);
+
+    // 4. 将修改后的列表写回状态机
+    // 注意：这里直接对顶层的 "playlist" 进行覆盖设置
+    set("playlist", list);
+
+    // 如果你在 2026 年的项目中启用了信号，这里会自动触发 UI 更新
+    // emit stateChanged();
+}
+
+QVariantMap AppState::getSong(int index) const {
+    return get(QString("playlist[%1]").arg(index)).toMap();
+}
+
+void AppState::setPlaylist(const QVariantList& newList) {
+    // 直接覆盖顶层的 playlist 键
+    set(QStringLiteral("playlist"), newList);
+}
+
+void AppState::incrementLikedCount(int index) {
+    // 1. 构造该项 liked_count 的完整路径
+    QString path = QStringLiteral("playlist[%1].liked_count").arg(index);
+
+    // 2. 获取当前值（如果不存在或非数字，toInt 会返回 0）
+    int currentCount = get(path).toInt();
+
+    // 3. 写回自增后的值
+    set(path, currentCount + 1);
+}
+//=====================current_track================
+
+void AppState::setCurrentTrack(const QVariantMap& trackData) {
+    // 获取现有的 current_track 模板以补全缺失字段（可选，保证结构完整性）
+    QVariantMap current = get("current_track").toMap();
+
+    // 合并新数据
+    for (auto it = trackData.constBegin(); it != trackData.constEnd(); ++it) {
+        current[it.key()] = it.value();
+    }
+
+    // 整体写回
+    set(QStringLiteral("current_track"), current);
+}
+
+void AppState::updateCurrentTrackField(const QString& field, const QVariant& value) {
+    // 利用万能 set 接口直接定位字段，例如 "current_track.position"
+    set(QStringLiteral("current_track.%1").arg(field), value);
+}
+
+//=================last_session ========================
+
+void AppState::syncCurrentToLastSession() {
+    // 1. 定义映射关系: [last_session字段] -> [current_track字段]
+    QMap<QString, QString> mapping = {
+        {"path",       "current_track.path"},
+        {"position",   "current_track.position"},
+        {"lyric_bind", "current_track.lyric_bind"}
+    };
+
+    // 2. 遍历并同步
+    auto it = mapping.constBegin();
+    while (it != mapping.constEnd()) {
+        QVariant value = get(it.value()); // 从 current_track 提取
+        set(QStringLiteral("last_session.%1").arg(it.key()), value); // 填充到 last_session
+        ++it;
+    }
+
+    // 3. 特殊处理：播放模式通常不在 current_track 里，直接从全局同步一次
+    set("last_session.play_mode", get("play_mode"));
+}
+
+
 
 
 // =============== 可选：播放模式便捷接口 ===============
@@ -158,6 +274,10 @@ void AppState::setCurrentPlayMode(PlayMode mode)
     set("play_mode", playModeToString(mode));
 }
 
+
+
+
+//=========================== 可选=================
 
 /**
  * @brief 递归合并两个 QVariantMap
