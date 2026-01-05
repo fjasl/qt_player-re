@@ -3,6 +3,13 @@
 #include "EventBus.h"
 #include "StoreState.h"
 #include "Storage.h"
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include <taglib/audioproperties.h>
+#include "extractMetaData.h"
+#include <QDebug>
+#include <QFileInfo>
+
 #include <QVariantMap>  // 必须：用于识别 QMediaMetaData::CoverArtImage
 #include <QImage>           // 必须：用于处理 QImage 对象
 #include <QByteArray>       // 必须：用于存储二进制数据
@@ -100,20 +107,6 @@ void PlayerModule::init() {
 
             qDebug() << "[Player] 用户选择了" << filePaths.size() << "个文件";
 
-            // ------------------- 你自己的逻辑写在这里 -------------------
-            // QVariantList currentList = ctx.appState->get("playlist").toList();
-
-            // QVariantMap newTrack = AppState::TrackTemplate;
-            // for(const QString& path : filePaths){
-            //     newTrack["path"] = path;
-            //     newTrack["lyric_bind"] = "";
-            //     newTrack["liked_count"] = 0;
-            //     currentList.append(newTrack);
-            // }
-            // ctx.appState->setPlaylist(currentList);
-            // Storage::instance().saveState(ctx.appState->getState());
-            // qDebug() << "[Player] 存储了文件" ;
-
             QVariantList currentList = ctx.appState->get("playlist").toList();
 
             // 2. 构建一个现有的路径集合，用于快速查重（O(1) 查询）
@@ -159,6 +152,42 @@ void PlayerModule::init() {
             // 4. 如果有新增，才更新状态和保存（避免无意义 I/O）
             if (addedCount > 0) {
                 ctx.appState->setPlaylist(currentList);
+
+                // --- 新增逻辑：初始化检查 ---
+                // 获取当前的 current_track 状态
+                QVariantMap currentTrack = ctx.appState->get("current_track").toMap();
+
+                // 如果 index 为 -1，说明当前没在播放任何歌曲
+                if (currentTrack.value("index").toInt() == -1 && !currentList.isEmpty()) {
+                    qDebug() << "[Player] 检测到播放列表初始化，将第一首歌曲设为待播放状态";
+
+                    // 1. 获取第一首歌的路径
+                    QVariantMap firstTrackFromList = currentList.first().toMap();
+                    QString firstPath = firstTrackFromList.value("path").toString();
+
+                    // 2. 提取元数据 (包含标题、艺术家、时长、封面)
+                    QVariantMap metadata = MusicMetadataHelper::extractMetadata(firstPath);
+
+                    if (metadata.value("success").toBool()) {
+                        // 3. 构造新的 current_track 状态
+                        QVariantMap newCurrentTrack = AppState::CurrentTrackTemplate;
+                        newCurrentTrack["index"] = 0;
+                        newCurrentTrack["path"] = firstPath;
+                        newCurrentTrack["title"] = metadata.value("title");
+                        newCurrentTrack["artist"] = metadata.value("artist");
+                        newCurrentTrack["duration"] = metadata.value("duration");
+                        newCurrentTrack["cover"] = metadata.value("cover"); // Base64
+
+                        // 4. 更新 AppState
+                        ctx.appState->setCurrentTrack(newCurrentTrack);
+                        QVariantMap payload;
+                        payload["current_track"] = newCurrentTrack;
+                        EventBus::instance().emitEvent("playlist_changed", {payload});
+                    }
+
+
+
+                }
                 Storage::instance().saveState(ctx.appState->getState());
                 qDebug() << "[Player] 成功添加" << addedCount << "首新歌曲，已自动去重";
             } else {
@@ -178,6 +207,37 @@ void PlayerModule::init() {
         } else {
             qDebug() << "[Player] 用户取消了文件选择";
             // 用户取消，无需额外处理
+        }
+    });
+    sm.registerHandler("list_track_play","player_list_track_play",[](const QVariantMap& data,const Context& ctx){
+        int index = data.value("index").toInt();
+        qDebug() << "[Player] 请求播放 index:" << index << "的音乐";
+
+        // 1. 获取 playlist 并转换为 QVariantList
+        QVariantList currentPlaylist = ctx.appState->get("playlist").toList();
+
+        // 索引安全检查
+        if (index < 0 || index >= currentPlaylist.size()) {
+            qWarning() << "[Player] 播放失败：索引越界";
+            return;
+        }
+
+        // 2. 关键修复：先转为 toMap()，再通过 .value() 获取 path
+        // QVariant 不支持 []，但 QVariantMap 支持 .value() 或 ["path"]
+        QVariantMap item = currentPlaylist.at(index).toMap();
+        QString filePath = item.value("path").toString();
+
+        if (filePath.isEmpty()) {
+            qWarning() << "[Player] 播放失败：文件路径为空";
+            return;
+        }
+
+        // 3. 调用 TagLib 2.1.1 封装方法提取元数据
+        QVariantMap metadata = MusicMetadataHelper::extractMetadata(filePath);
+
+        // 打印调试
+        if (metadata.value("success").toBool()) {
+            qDebug() << "[Player] 成功读取元数据 - 标题:" << metadata.value("title").toString();
         }
     });
 

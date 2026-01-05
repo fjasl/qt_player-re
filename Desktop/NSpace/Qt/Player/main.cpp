@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
     // 3. 将单例注入 QML 全局环境
     // 这样在 QML 中可以直接使用 Connetor.dispatch(...) 和 EventBus.onBackendEvent
-    engine.rootContext()->setContextProperty("Connetor", &Connector::instance());
+    engine.rootContext()->setContextProperty("Connector", &Connector::instance());
     engine.rootContext()->setContextProperty("EventBus", &EventBus::instance());
 
 

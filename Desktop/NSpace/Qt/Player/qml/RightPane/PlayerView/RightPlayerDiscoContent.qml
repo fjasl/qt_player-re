@@ -72,7 +72,7 @@ Item {
                     anchors.centerIn: parent
                     width: parent.width * (10 / 9) * (20 / 19)
                     height: width
-                    source: "qrc:/icon/icons/awefont/gear-solid.svg"
+                    // source: "qrc:/icon/icons/awefont/gear-solid.svg"
                     fillMode: Image.PreserveAspectCrop
                 }
             }

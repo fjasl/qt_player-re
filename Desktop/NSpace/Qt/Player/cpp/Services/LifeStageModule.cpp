@@ -2,7 +2,6 @@
 #include "Connector.h"
 #include "EventBus.h"
 #include "StoreState.h"
-#include "Storage.h"
 
 // 现在编译器就能识别 LifeStageModule 类了
 void LifeStageModule::init() {

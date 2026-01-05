@@ -79,6 +79,6 @@ ApplicationWindow {
     }
     Component.onCompleted: {
            // 可以在这里驱动 Connector 或 Logic
-           Connetor.dispatch("window_ready", {})
+           Connector.dispatch("window_ready", {})
        }
 }

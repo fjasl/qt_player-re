@@ -220,6 +220,7 @@ Item {
                         //root.activeItem(index)
                         root.activeVisualItem(index, true)
                         root.currentInt = index
+                        Connector.dispatch("list_track_play",{index:index})
                     }
                 }
             }

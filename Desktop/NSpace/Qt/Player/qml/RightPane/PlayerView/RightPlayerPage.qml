@@ -17,6 +17,32 @@ Item {
     property int metaData_CoverArtImage: 24
     property int metaData_TrackNumber: 12
 
+    Connections {
+        target: EventBus // 这里的 EventBus 是你在 C++ setContextProperty 注入的名称
+
+        // 使用 Qt 6 推荐的 function 语法
+        function onBackendEvent(event, payload) {
+            if (payload.current_track) {
+                var track = payload.current_track
+
+                // 2. 动态绑定路径：必须确保路径符合 QML 的 URL 规范
+                // 2026 建议：如果 path 是本地路径 "D:/...", 需转为 "file:///D:/..."
+                if (track.path) {
+                    let formattedPath = track.path
+                    if (!formattedPath.startsWith("file:///")) {
+                        formattedPath = "file:///" + formattedPath
+                    }
+                    root.audioSource = formattedPath
+                }
+
+                // 3. 同时更新 UI 上的其他信息
+                console.log("当前播放已初始化:", track.title, "艺术家:", track.artist)
+                // 封面图如果是 Base64，直接赋值给 Image 的 source 即可
+                //discoCover.source = track.cover;
+            }
+        }
+    }
+
     width: parent.width
     height: parent.height * 0.25
     anchors.top: parent.top
@@ -61,10 +87,10 @@ Item {
             songInfo.artist.text = player.metaData.value(
                         root.metaData_ContributingArtist)[0] || "未知艺术家"
             if (player.metaData.value(root.metaData_CoverArtImage)) {
-                Connetor.dispatch("cover_request", {
-                                      "image": player.metaData.value(
-                                                   root.metaData_CoverArtImage)
-                                  })
+                Connector.dispatch("cover_request", {
+                                       "image": player.metaData.value(
+                                                    root.metaData_CoverArtImage)
+                                   })
             }
         }
     }
@@ -140,7 +166,7 @@ Item {
                                     }
                                 }
                                 onPrevBtnOnClick: {
-                                    Connetor.dispatch("media_prev", {})
+                                    Connector.dispatch("media_prev", {})
                                 }
                             }
                         }
@@ -158,8 +184,9 @@ Item {
         }
     }
     Component.onCompleted: {
+
         // Windows 本地路径写法（注意用正斜杠 / ，或者双反斜杠 \\）
-        root.audioSource = "file:///D:/Resource/Music/风错过雨.mp3"
+        //root.audioSource = "file:///D:/Resource/Music/风错过雨.mp3"
 
         // 或者这样写也行（Qt 会自动处理）
         // player.source = "file:D:/Resource/Music/aliez.mp3"

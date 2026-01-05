@@ -25,7 +25,7 @@ Item {
                         listContent.scrollToCurrent()
                     }
                     onOpenfileBtnClicked: {
-                        Connetor.dispatch("open_file", {})
+                        Connector.dispatch("open_file", {})
                     }
                 }
             }

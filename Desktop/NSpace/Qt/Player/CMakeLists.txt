@@ -4,8 +4,10 @@ project(Practice VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
-
+set(TagLib_DIR "C:/Users/27576/Desktop/tmp/taglib_output/lib/cmake/taglib")
+find_package(TagLib REQUIRED)
 find_package(Qt6 REQUIRED COMPONENTS Quick Widgets QuickControls2)
+
 qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appPractice
@@ -61,7 +63,9 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/StoreState.cpp
          SOURCES cpp/Services/LifeStageModule.h
          SOURCES cpp/Services/LifeStageModule.cpp
-       )
+         SOURCES cpp/Services/extractMetaData.h
+         SOURCES cpp/Services/extractMetaData.cpp
+)
 
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -80,6 +84,7 @@ target_link_libraries(appPractice
     Qt6::Widgets
     Qt6::QuickControls2
     Qt6::LabsPlatformplugin
+    TagLib::TagLib
 )
 
 target_include_directories(appPractice PRIVATE
@@ -93,3 +98,4 @@ install(TARGETS appPractice
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+
