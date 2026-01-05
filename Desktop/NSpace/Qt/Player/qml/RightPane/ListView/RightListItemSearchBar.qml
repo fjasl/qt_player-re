@@ -6,6 +6,7 @@ Rectangle {
     id: root
     signal trashBtnClick(int itemIndex)
     signal inputTextChanged(string text)
+    property alias text:inputField.text
     width: scrollableList.width
     height: scrollableList.height * 0.2
     color: "transparent"
@@ -55,15 +56,8 @@ Rectangle {
             Layout.fillHeight: true
             Layout.fillWidth: true
             Layout.preferredWidth: 42
-            // Text {
-            //     text: "这里是搜索框"
-            //     anchors.verticalCenter: parent.verticalCenter
-            //     // 水平靠左
-            //     anchors.left: parent.left
-            //     font.pixelSize: parent.height * 0.4
-            //     color: "white"
-            // }
             TextField {
+                id : inputField
                 width: parent.width
                 height: parent.height
                 anchors.verticalCenter: parent.verticalCenter

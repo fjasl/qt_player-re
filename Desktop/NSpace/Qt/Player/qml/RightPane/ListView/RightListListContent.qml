@@ -6,141 +6,111 @@ Item {
     id: root
     anchors.fill: parent
     // 必须确保这个容器填充父级布局分配的空间
+    property Item searchBar: null
+
     property int currentInt: -1
+    property int currentPlayingListIndex: -1
     property int activeInt: -1
+    property int lastActiveIndex: -1
     property bool isSearchBarOn: false
-    property list<int> indexList: []
+    property var currentVisualItems: []
 
-    function activeItem(index) {
-        if (indexList.length === 0) {
-            indexList.push(index)
-            highLight(indexList[0])
-        } else if (indexList.length === 1) {
-            indexList.push(index)
-            unHighLight(indexList[0])
-            highLight(indexList[1])
-        } else {
-            indexList.push(index)
-            indexList.splice(0, 1)
-            unHighLight(indexList[0])
-            highLight(indexList[1])
+    function activeVisualItem(vIndex, doubleClick) {
+
+        var currentVisualItem = visualModel.items.get(vIndex)
+        if (!currentVisualItem) {
+            return
         }
-    }
-    function updateFromSearchBar() {
-        if (root.isSearchBarOn) {
-            var tempArrayP = [...indexList]
 
-            // 2. 遍历自增
-            for (var i = 0; i < tempArrayP.length; i++) {
-                tempArrayP[i] += 1
-            }
+        var sourceIndex = currentVisualItem.model.index
 
-            // 3. 写回属性
-            // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
-            indexList = tempArrayP
-            currentInt += 1
-        } else if (!root.isSearchBarOn) {
-            var tempArrayD = [...indexList]
+        // 取消旧高亮
+        if (root.lastActiveIndex !== -1) {
+            unHighLightItem(root.lastActiveIndex)
+        }
 
-            // 2. 遍历自增
-            for (var i = 0; i < tempArrayD.length; i++) {
-                tempArrayD[i] -= 1
-            }
+        // 新高亮
+        highLightItem(sourceIndex)
 
-            // 3. 写回属性
-            // 此时 tempArray 是一个新的对象引用，赋值必会触发信号
-            indexList = tempArrayD
-            currentInt -= 1
+        root.lastActiveIndex = sourceIndex
+
+        if (doubleClick) {
+            root.currentPlayingListIndex = sourceIndex
         }
     }
 
-    function highLight(index) {
-        if (index < 0 || index >= listItem.count)
-            return
-        // 使用 setProperty 修改数据，ListView 会自动通知对应的 Delegate 更新
-        listItem.setProperty(index, "onActive", true)
+    function highLightItem(listIndex) {
+        listItem.setProperty(listIndex, "onActive", true)
     }
 
-    function unHighLight(index) {
-        if (index < 0 || index >= listItem.count)
-            return
-        // 使用 setProperty 修改数据，ListView 会自动通知对应的 Delegate 更新
-        listItem.setProperty(index, "onActive", false)
+    function unHighLightItem(listIndex) {
+        listItem.setProperty(listIndex, "onActive", false)
     }
 
     function toggleSearchBar() {
+        var loader = scrollableList.headerItem.children[0]
 
-        // 1. 检查第一项是否是搜索框
-        if (listItem.count > 0 && listItem.get(0).searchBar === true) {
-            //console.log("搜索框已存在，执行移除...")
-            for (var i = 0; i < visualModel.items.count; i++) {
-                visualModel.items.get(i).inVisibleItems = true
-            }
-            listItem.remove(0) // 如果有，就移除它
+        if (root.isSearchBarOn) {
             root.isSearchBarOn = false
-            root.updateFromSearchBar()
-        } else {
-            //console.log("搜索框不存在，执行添加...")
-            listItem.insert(0, {
-                                "searchBar": true,
-                                "name": "搜索框"
-                            })
-            // 滚动到顶部确保可见
-            scrollableList.positionViewAtBeginning()
-            //scrollableList.contentY = -scrollableList.height * 0.2
+            if (root.searchBar) {
+                root.searchBar.text = ""
+            }
+        } else if (!root.isSearchBarOn) {
             root.isSearchBarOn = true
-            root.updateFromSearchBar()
         }
     }
 
     function scrollToCurrent() {
-        if (currentInt < 0 || currentInt >= listItem.count)
+        if (root.currentPlayingListIndex !== -1) {
+            root.scrollToIndex(root.currentPlayingListIndex)
+        }
+    }
+
+
+    /**
+     * 滚动到指定索引
+     * @param {int} sourceIdx - 原始数据模型中的索引 (ListItem 的索引)
+     */
+    function scrollToIndex(sourceIdx) {
+        if (sourceIdx < 0 || sourceIdx >= listItem.count)
             return
 
-        activeItem(currentInt)
+        var visualIdx = -1
+        if (root.isSearchBarOn && root.currentVisualItems.length > 0) {
+            // 搜索模式：只在当前可见的 sourceIndex 数组里找位置
+            for (var i = 0; i < root.currentVisualItems.length; ++i) {
+                if (root.currentVisualItems[i] === sourceIdx) {
+                    visualIdx = i
+                    break
+                }
+            }
+        } else {
+            // 非搜索模式：所有项都可见，直接遍历 visualModel.items
+            for (var i = 0; i < visualModel.items.count; ++i) {
+                if (visualModel.items.get(i).model.index === sourceIdx) {
+                    visualIdx = i
+                    break
+                }
+            }
+        }
 
-        // 1. 获取基础参数
-        var itemHeight = scrollableList.height * 0.2
-        var viewHeight = scrollableList.height
-
-        // 2. 检查内容是否填满一屏
-        // 注意：contentHeight 建议在渲染帧更新后再读取，这里加上 originY 修正
-        if (scrollableList.contentHeight <= viewHeight) {
-            scrollableList.contentY = scrollableList.originY // 修正点：使用 originY
+        if (visualIdx === -1) {
             return
         }
-
-        // 3. 计算理想目标位置
-        // targetY 应该是相对于 originY 的偏移量
-        var targetY = scrollableList.originY + (currentInt * itemHeight)
-
-        // 如果 SearchBar 开启，且它在原始模型索引 0 的位置（导致后面项下移）
-        if (root.isSearchBarOn) {
-            //targetY += itemHeight
-        }
-
-        // 4. 计算最大允许滚动值
-        // maxScrollY 也必须基于 originY
-        var maxScrollY = scrollableList.originY + Math.max(
-                    0, scrollableList.contentHeight - viewHeight)
-
-        // 5. 最终赋值
-        // Math.max(scrollableList.originY, ...) 确保不会滚过头露出上方空白
-        scrollableList.contentY = Math.max(scrollableList.originY,
-                                           Math.min(targetY, maxScrollY))
+        scrollableList.positionViewAtIndex(visualIdx, ListView.Contain)
+        activeVisualItem(sourceIdx, false)
     }
 
     function filterItems(searchText) {
+        root.currentVisualItems = []
         var term = searchText.toLowerCase()
         for (var i = 0; i < visualModel.items.count; i++) {
             var data = visualModel.items.get(i).model
-            // 搜索框项始终可见
-            if (data.searchBar === true) {
-                visualModel.items.get(i).inVisibleItems = true
-            } else {
-                // 根据 name 字段过滤
-                var isMatch = data.name.toLowerCase().indexOf(term) !== -1
-                visualModel.items.get(i).inVisibleItems = isMatch
+            var isMatch = data.name.toLowerCase().indexOf(term) !== -1
+            visualModel.items.get(i).inVisibleItems = isMatch
+            if (isMatch) {
+                root.currentVisualItems.push(visualModel.items.get(
+                                                 i).model.index)
             }
         }
     }
@@ -149,7 +119,7 @@ Item {
         id: listItem
         dynamicRoles: true
         Component.onCompleted: {
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 100; i++)
                 append({
                            "searchBar": false,
                            "name": "项目 " + i,
@@ -163,6 +133,7 @@ Item {
     DelegateModel {
         id: visualModel
         model: listItem
+
         filterOnGroup: "visibleItems" // 只显示属于此组的项
 
         groups: [
@@ -191,10 +162,12 @@ Item {
                     onactive: model.onActive
                     onTrashBtnClick: listItem.remove(index)
                     onItemClicked: {
-                        root.activeItem(index)
+                        //root.activeItem(index)
+                        root.activeVisualItem(index, false)
                     }
                     onItemDoubleClicked: {
-                        root.activeItem(index)
+                        //root.activeItem(index)
+                        root.activeVisualItem(index, true)
                         root.currentInt = index
                     }
                 }
@@ -209,6 +182,50 @@ Item {
 
         // 关键点 1：必须有数据模型
         model: visualModel
+
+        header: Item {
+            // 使用一个容器包裹 Loader
+            width: parent.width
+            height: headerLoader.height // 容器高度同步 Loader 高度
+
+            Loader {
+                id: headerLoader
+                width: parent.width
+                // 关键：动画作用于此
+                height: root.isSearchBarOn ? 45 : 0
+                clip: true
+
+                // 移除 visible: height > 0，改用 opacity 或直接靠 clip
+                opacity: height > 0 ? 1 : 0
+
+                Behavior on height {
+                    NumberAnimation {
+                        id: headerAnimation
+                        duration: 200
+                        easing.type: Easing.InOutQuad
+                        onRunningChanged: {
+                            if (!headerAnimation.running
+                                    && root.isSearchBarOn) {
+                                // 确保 header 完全可见
+                                scrollableList.positionViewAtBeginning()
+                            }
+                        }
+                    }
+                }
+
+                sourceComponent: RightListItemSearchBar {
+                    id: searchBar
+                    width: headerLoader.width
+                    onInputTextChanged: text => root.filterItems(text)
+                }
+                onLoaded: {
+                    root.searchBar = headerLoader.item
+                }
+            }
+        }
+
+        // 确保设置
+        headerPositioning: ListView.PullBackHeader
 
         // 选配：设置滚动条（QtQuick.Controls 模块提供）
         ScrollBar.vertical: ScrollBar {
