@@ -347,6 +347,15 @@ void PlayerModule::init() {
         currentTrack["position"] = pos;
 
         ctx.appState->set("current_track", currentTrack);
+
+        int lyric_index = ctx.lrcParser->findLyricByTime(pos/1000);
+        if(ctx.appState->getCurrentLyricRow()!= lyric_index){
+            ctx.appState->setCurrentLyricRow(lyric_index);
+            QVariantMap payload;
+            payload["index"]= lyric_index;
+            EventBus::instance().emitEvent("lyric_index_changed", payload);
+        }
+
     });
 
     sm.registerHandler("seek", "player_seek", [](const QVariantMap& data, const Context& ctx) {

@@ -240,7 +240,14 @@ void AppState::syncCurrentToLastSession() {
     set("last_session.play_mode", get("play_mode"));
 }
 
+//============================lyric ===================
+int AppState::getCurrentLyricRow(){
 
+    return get("Lyric.currentLyricRow").toInt();
+}
+void AppState::setCurrentLyricRow(int index){
+    set("Lyric.currentLyricRow",index);
+}
 
 
 // =============== 可选：播放模式便捷接口 ===============

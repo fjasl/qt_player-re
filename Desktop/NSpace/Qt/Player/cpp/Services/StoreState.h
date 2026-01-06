@@ -159,6 +159,10 @@ public:
  * @brief 更新当前播放曲目的特定属性 (如 "position", "duration")
  */
     void updateCurrentTrackField(const QString& field, const QVariant& value);
+
+//============================lyric ===================
+    int getCurrentLyricRow();
+    void setCurrentLyricRow(int index);
 //=================last_session ========================
 
 
