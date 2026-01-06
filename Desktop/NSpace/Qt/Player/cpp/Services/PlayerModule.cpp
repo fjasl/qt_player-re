@@ -250,6 +250,7 @@ void PlayerModule::init() {
         currentTrack["path"] = filePath;
         // 确保 position 初始为 0
         currentTrack["position"] = 0;
+        currentTrack["lyric_bind"] = item.value("lyric_bind", "");
         currentTrack["title"] = metadata.value("title");
         currentTrack["artist"] = metadata.value("artist");
         currentTrack["duration"] = metadata.value("duration");
@@ -281,6 +282,19 @@ void PlayerModule::init() {
                 history.removeFirst();
             }
         }
+
+
+        ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
+        const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
+
+        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        for (const auto& line : lyrics) {
+            // 格式化打印：时间保留 3 位小数，左对齐
+            qDebug() << QString("[%1s] %2")
+                            .arg(line.time, 8, 'f', 3, ' ')
+                            .arg(line.text);
+        }
+
 
 
 
@@ -377,6 +391,7 @@ void PlayerModule::init() {
         currentTrack["path"] = filePath;
         currentTrack["position"] = 0;
         // 确保 position 初始为 0
+        currentTrack["lyric_bind"] = item.value("lyric_bind", "");
         currentTrack["title"] = metadata.value("title");
         currentTrack["artist"] = metadata.value("artist");
         currentTrack["duration"] = metadata.value("duration");
@@ -412,7 +427,16 @@ void PlayerModule::init() {
 
         }
 
+        ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
+        const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
 
+        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        for (const auto& line : lyrics) {
+            // 格式化打印：时间保留 3 位小数，左对齐
+            qDebug() << QString("[%1s] %2")
+                            .arg(line.time, 8, 'f', 3, ' ')
+                            .arg(line.text);
+        }
 
 
     });
@@ -482,6 +506,7 @@ void PlayerModule::init() {
         QVariantMap currentTrack = metadata;
         currentTrack["index"] = targetIdx;
         currentTrack["path"] = filePath;
+        currentTrack["lyric_bind"] = item.value("lyric_bind", "");
         // 确保 position 初始为 0
         currentTrack["position"] = 0;
 
@@ -496,6 +521,21 @@ void PlayerModule::init() {
         ctx.appState->set("is_playing", true); // 更新播放状态
         payload["is_playing"] = true;
         EventBus::instance().emitEvent("player_state_changed",payload);
+
+
+        ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
+        const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
+
+        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        for (const auto& line : lyrics) {
+            // 格式化打印：时间保留 3 位小数，左对齐
+            qDebug() << QString("[%1s] %2")
+                            .arg(line.time, 8, 'f', 3, ' ')
+                            .arg(line.text);
+        }
+
+
+
     });
     sm.registerHandler("list_track_del","player_list_track_del",[](const QVariantMap& data,const Context& ctx){
         int index = data.value("index").toInt();
