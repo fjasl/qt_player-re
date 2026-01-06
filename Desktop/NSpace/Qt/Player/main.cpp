@@ -96,8 +96,17 @@ int main(int argc, char *argv[])
     });
 
     QAction *quitAction = new QAction("退出", menu);
-    QObject::connect(quitAction, &QAction::triggered, &app, &QApplication::quit);
+    //QObject::connect(quitAction, &QAction::triggered, &app, &QApplication::quit);
+    QObject::connect(quitAction, &QAction::triggered, [&](){
+        // 1. 在真正退出前同步状态
+        state.syncCurrentToLastSession();
 
+        // 2. 将状态持久化到磁盘 (假设你的 Storage 类有此接口)
+        Storage::instance().saveState(state.getState());
+
+        // 3. 正式退出
+        QApplication::quit();
+    });
     menu->addAction(toggleAction);
     menu->addAction(contactAction);
     menu->addSeparator();

@@ -45,6 +45,7 @@ public:
     // 上次会话恢复信息模板
     static inline const QVariantMap LastSessionTemplate = []() {
         QVariantMap tmpl;
+        tmpl["index"]=-1;
         tmpl["path"] = "";
         tmpl["position"] = -1;
         tmpl["play_mode"] = "single_loop";
@@ -101,9 +102,17 @@ public:
     QString playModeToString(PlayMode mode) const {
         return (mode == SingleLoop) ? QStringLiteral("single_loop") : QStringLiteral("shuffle");
     }
+    // AppState.h 增加
+    PlayMode stringToPlayMode(const QString& modeStr) const {
+        if (modeStr == QLatin1String("shuffle")) {
+            return AppState::Shuffle;
+        }
+        // 默认为单曲循环或其他逻辑
+        return AppState::SingleLoop;
+    }
 
     // 如果你还想暴露当前播放模式（可选）
-    PlayMode currentPlayMode() const;
+    QString currentPlayMode() const;
     void setCurrentPlayMode(PlayMode mode);
     //void mergeStates(QVariantMap& base, const QVariantMap& loaded);
     void mergeStates(const QVariantMap& loaded);

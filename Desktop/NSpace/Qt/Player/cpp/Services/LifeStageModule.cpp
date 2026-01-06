@@ -13,7 +13,17 @@ void LifeStageModule::init() {
         payload["playlist"] = ctx.appState->get("playlist");
 
         EventBus::instance().emitEvent("playlist_changed", {payload});
-        qDebug() << "[Player] 成功通知qml2";
+        qDebug() << "[Player] 加载歌曲列表";
+
+
+        payload["current_track"] = ctx.appState->get("last_session");
+
+        EventBus::instance().emitEvent("current_track",{payload});
+
+        payload["play_mode"] = ctx.appState->currentPlayMode();
+        EventBus::instance().emitEvent("mode_switched", payload);
+
+
     });
 
 

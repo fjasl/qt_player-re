@@ -8,7 +8,7 @@ Item {
     // 必须确保这个容器填充父级布局分配的空间
     property Item searchBar: null
 
-    property int currentInt: -1
+
     property int currentPlayingListIndex: -1
     property int activeInt: -1
     property int lastActiveIndex: -1
@@ -23,10 +23,23 @@ Item {
             if (event === "playlist_changed") {
                 root.reloadList(payload.playlist)
             }
+            if(event ==="current_track"){
+                if (payload.current_track) {
+                    var track = payload.current_track
+
+                    if (track.index >= 0 && track.index < listItem.count) {
+                        root.currentPlayingListIndex = track.index
+                    }
+                    console.log(" 获得播放索引 index:"+ root.currentPlayingListIndex)
+                    activeVisualItem(root.currentPlayingListIndex)
+                }
+            }
+
+
         }
     }
 
-    function activeVisualItem(vIndex, doubleClick) {
+    function activeVisualItem(vIndex) {
 
         var currentVisualItem = visualModel.items.get(vIndex)
         if (!currentVisualItem) {
@@ -45,9 +58,9 @@ Item {
 
         root.lastActiveIndex = sourceIndex
 
-        if (doubleClick) {
-            root.currentPlayingListIndex = sourceIndex
-        }
+        // if (doubleClick) {
+        //     root.currentPlayingListIndex = sourceIndex
+        // }
     }
 
     function highLightItem(listIndex) {
@@ -109,7 +122,7 @@ Item {
             return
         }
         scrollableList.positionViewAtIndex(visualIdx, ListView.Contain)
-        activeVisualItem(sourceIdx, false)
+        activeVisualItem(sourceIdx)
     }
 
     function filterItems(searchText) {
@@ -214,12 +227,11 @@ Item {
                     onTrashBtnClick: listItem.remove(index)
                     onItemClicked: {
                         //root.activeItem(index)
-                        root.activeVisualItem(index, false)
+                        root.activeVisualItem(index)
                     }
                     onItemDoubleClicked: {
                         //root.activeItem(index)
-                        root.activeVisualItem(index, true)
-                        root.currentInt = index
+                        root.activeVisualItem(index)
                         Connector.dispatch("list_track_play",{index:index})
                     }
                 }

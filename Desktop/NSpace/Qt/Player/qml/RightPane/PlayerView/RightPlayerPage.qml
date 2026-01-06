@@ -22,23 +22,36 @@ Item {
 
         // 使用 Qt 6 推荐的 function 语法
         function onBackendEvent(event, payload) {
-            if (payload.current_track) {
-                var track = payload.current_track
+            if (event === "current_track") {
+                if (payload.current_track) {
+                    var track = payload.current_track
 
-                // 2. 动态绑定路径：必须确保路径符合 QML 的 URL 规范
-                // 2026 建议：如果 path 是本地路径 "D:/...", 需转为 "file:///D:/..."
-                if (track.path) {
-                    let formattedPath = track.path
-                    if (!formattedPath.startsWith("file:///")) {
-                        formattedPath = "file:///" + formattedPath
+                    if (track.path) {
+                        let formattedPath = track.path
+                        if (!formattedPath.startsWith("file:///")) {
+                            formattedPath = "file:///" + formattedPath
+                        }
+                        root.audioSource = formattedPath
+                        if (track.position > 0) {
+                            player.targetStartPosition = track.position
+                        } else {
+                            player.targetStartPosition = 0
+                        }
                     }
-                    root.audioSource = formattedPath
                 }
-
-                // 3. 同时更新 UI 上的其他信息
-                console.log("当前播放已初始化:", track.title, "艺术家:", track.artist)
-                // 封面图如果是 Base64，直接赋值给 Image 的 source 即可
-                //discoCover.source = track.cover;
+            }
+            if (event === "player_state_changed") {
+                if (payload.is_playing) {
+                    player.play()
+                } else if (!payload.is_playing) {
+                    player.pause()
+                }
+            }
+            if (event === "seek_handled") {
+                if (payload.target_position !== undefined) {
+                    // 真正执行 MediaPlayer 的跳转
+                    player.position = payload.target_position;
+                }
             }
         }
     }
@@ -55,6 +68,25 @@ Item {
 
         source: root.audioSource // 绑定外部传入的音频路径
         audioOutput: AudioOutput {} // Qt6 必须有这一行，否则无声！
+        property real targetStartPosition: 0
+
+        onMediaStatusChanged: {
+            // 情况 A: 媒体加载或缓冲完成 (用于恢复进度)
+               if (mediaStatus === MediaPlayer.LoadedMedia || mediaStatus === MediaPlayer.BufferedMedia) {
+                   if (targetStartPosition > 0 && seekable) {
+                       console.log("2026 恢复位置成功:", targetStartPosition);
+                       player.position = targetStartPosition;
+                       targetStartPosition = 0;
+                   }
+               }
+               // 情况 B: 播放自然结束
+               else if (mediaStatus === MediaPlayer.EndOfMedia) {
+                   console.log("检测到播放结束，准备切换下一首...");
+
+                   // 触发下一首逻辑 (通过 Connector 发送指令给 C++ 处理列表循环)
+                   Connector.dispatch("play_next", {});
+               }
+            }
         // 音量 0.0 ~ 1.0
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.PlayingState) {
@@ -74,6 +106,9 @@ Item {
                             new Date(player.position), "mm:ss")
                 progressBar.durationer.text = Qt.formatTime(
                             new Date(player.duration), "mm:ss")
+                Connector.dispatch("position_report", {
+                                       "position": player.position
+                                   })
             }
         }
         onMetaDataChanged: {
@@ -135,7 +170,11 @@ Item {
                             Layout.fillHeight: true
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
-                            RightPlayerWidgetFunContent {}
+                            RightPlayerWidgetFunContent {
+                                 onSwitchModeBtnClick:{
+                                     Connector.dispatch("switch_mode", {})
+                                 }
+                            }
                         }
                         Item {
                             Layout.fillHeight: true
@@ -144,10 +183,11 @@ Item {
                             RightPlayerWidgetProgressBar {
                                 id: progressBar
                                 onSeekRequested: percent => {
-                                                     if (player.duration > 0) {
-                                                         // 跳转播放器进度：总时长 * 比例
-                                                         player.position = player.duration * percent
-                                                     }
+                                                     // if (player.duration > 0) {
+                                                     //     // 跳转播放器进度：总时长 * 比例
+                                                     //     player.position = player.duration * percent
+                                                     // }
+                                                     Connector.dispatch("seek", {percent:percent})
                                                  }
                             }
                         }
@@ -158,15 +198,13 @@ Item {
                             RightPlayerWidgetControlContent {
                                 id: controlContent
                                 onPlayBtnOnClick: {
-                                    console.log("播放按钮被点击！")
-                                    if (player.playbackState === MediaPlayer.PlayingState) {
-                                        player.pause()
-                                    } else {
-                                        player.play()
-                                    }
+                                    Connector.dispatch("play_toggle", {})
                                 }
                                 onPrevBtnOnClick: {
-                                    Connector.dispatch("media_prev", {})
+                                    Connector.dispatch("play_prev", {})
+                                }
+                                onNextBtnOnClick: {
+                                    Connector.dispatch("play_next", {});
                                 }
                             }
                         }
