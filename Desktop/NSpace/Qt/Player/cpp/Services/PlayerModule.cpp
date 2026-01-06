@@ -508,7 +508,20 @@ void PlayerModule::init() {
         payload["is_playing"] = true;
         EventBus::instance().emitEvent("player_state_changed",payload);
     });
+    sm.registerHandler("list_track_del","player_list_track_del",[](const QVariantMap& data,const Context& ctx){
+        int index = data.value("index").toInt();
 
+
+        ctx.appState->removeSong(index);
+
+        QVariantMap payload;
+        payload["playlist"] = ctx.appState->get("playlist");
+
+        EventBus::instance().emitEvent("playlist_changed",payload);
+
+
+
+    });
 
 
 

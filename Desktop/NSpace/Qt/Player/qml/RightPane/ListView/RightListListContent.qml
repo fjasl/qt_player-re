@@ -224,7 +224,11 @@ Item {
                     // 注意：在 DelegateModel 中删除需要使用原模型索引
                     text: model.text
                     onactive: model.onActive
-                    onTrashBtnClick: listItem.remove(index)
+                    onTrashBtnClick: {
+
+                        Connector.dispatch("list_track_del",{index:index})
+                        //listItem.remove(index)
+                    }
                     onItemClicked: {
                         //root.activeItem(index)
                         root.activeVisualItem(index)
