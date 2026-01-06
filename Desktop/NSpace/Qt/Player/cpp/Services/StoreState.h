@@ -147,6 +147,8 @@ public:
  */
     void incrementLikedCount(int index);
 
+    void setTrackLyric(int index, const QString& lyricPath);
+
 //============================current_track ===================
     /**
  * @brief 整体更新当前播放的曲目信息

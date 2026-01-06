@@ -394,10 +394,6 @@ void PlayerModule::init() {
         EventBus::instance().emitEvent("player_state_changed",payload);
 
 
-
-
-
-
         if (nextIdx == currentIdx) {
 
         }else{

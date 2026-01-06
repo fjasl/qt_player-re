@@ -67,6 +67,8 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/extractMetaData.cpp
          SOURCES cpp/Services/LrcParser.h
          SOURCES cpp/Services/LrcParser.cpp
+         SOURCES cpp/Services/LyricModule.cpp cpp/Services/LyricModule.h
+
 )
 
 

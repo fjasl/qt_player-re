@@ -6,6 +6,7 @@ Rectangle {
     signal trashBtnClick(int itemIndex)
     signal itemClicked
     signal itemDoubleClicked
+    signal bindBtnClick
     property alias text: itemText.text
     property bool onactive: false
 
@@ -71,7 +72,7 @@ Rectangle {
             Layout.preferredWidth: 32
             Text {
                 id: itemText
-                text: "这里是一个演示"
+                text: ""
                 anchors.verticalCenter: parent.verticalCenter
                 // 水平靠左
                 anchors.left: parent.left
@@ -85,6 +86,11 @@ Rectangle {
             Layout.preferredWidth: 5
             RightListItemIcon {
                 source: "qrc:/icon/icons/awefont/list/file-contract-solid.svg"
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: root.bindBtnClick()
+                }
             }
         }
         Item {

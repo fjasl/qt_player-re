@@ -179,6 +179,24 @@ void AppState::incrementLikedCount(int index) {
     // 3. 写回自增后的值
     set(path, currentCount + 1);
 }
+
+/**
+ * @brief 绑定指定索引歌曲的歌词路径
+ * @param index 歌曲在播放列表中的索引
+ * @param lyricPath 歌词文件的绝对路径或相对路径
+ */
+void AppState::setTrackLyric(int index, const QString& lyricPath) {
+    if (index < 0) return;
+
+    // 2026 标准：利用字符串模板构建路径，例如 "playlist.0.lyric_bind"
+    // 注意：根据你的 parsePath 实现，路径分隔符可能是 "." 或其他
+    QString path = QString("playlist.%1.lyric_bind").arg(index);
+
+    // 调用已有的 set 方法，它会触发 updateRecursive 自动处理副本写回
+    this->set(path, lyricPath);
+}
+
+
 //=====================current_track================
 
 void AppState::setCurrentTrack(const QVariantMap& trackData) {

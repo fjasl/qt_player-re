@@ -232,6 +232,11 @@ Item {
                                                "index": index
                                            })
                     }
+                    onBindBtnClick: {
+                        Connector.dispatch("lyric_bind", {
+                                               "index": index
+                                           })
+                    }
                 }
             }
         }
