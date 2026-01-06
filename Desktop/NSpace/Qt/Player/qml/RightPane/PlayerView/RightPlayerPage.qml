@@ -16,6 +16,7 @@ Item {
     property int metaData_AlbumTitle: 1
     property int metaData_CoverArtImage: 24
     property int metaData_TrackNumber: 12
+    property string lastPlayPath: ""
 
     Connections {
         target: EventBus // 这里的 EventBus 是你在 C++ setContextProperty 注入的名称
@@ -31,12 +32,20 @@ Item {
                         if (!formattedPath.startsWith("file:///")) {
                             formattedPath = "file:///" + formattedPath
                         }
-                        root.audioSource = formattedPath
-                        if (track.position > 0) {
-                            player.targetStartPosition = track.position
-                        } else {
-                            player.targetStartPosition = 0
+
+                        progressBar.fill.width = progressBar.track.width
+                                * (track.position / player.duration)
+
+                        if (track.path && track.path !== root.lastPlayPath) {
+                            root.audioSource = formattedPath
+                            if (track.position > 0) {
+                                player.targetStartPosition = track.position
+                            } else {
+                                player.targetStartPosition = 0
+                            }
                         }
+
+                        root.lastPlayPath = track.path
                     }
                 }
             }
@@ -50,7 +59,7 @@ Item {
             if (event === "seek_handled") {
                 if (payload.target_position !== undefined) {
                     // 真正执行 MediaPlayer 的跳转
-                    player.position = payload.target_position;
+                    player.position = payload.target_position
                 }
             }
         }
@@ -72,21 +81,21 @@ Item {
 
         onMediaStatusChanged: {
             // 情况 A: 媒体加载或缓冲完成 (用于恢复进度)
-               if (mediaStatus === MediaPlayer.LoadedMedia || mediaStatus === MediaPlayer.BufferedMedia) {
-                   if (targetStartPosition > 0 && seekable) {
-                       console.log("2026 恢复位置成功:", targetStartPosition);
-                       player.position = targetStartPosition;
-                       targetStartPosition = 0;
-                   }
-               }
-               // 情况 B: 播放自然结束
-               else if (mediaStatus === MediaPlayer.EndOfMedia) {
-                   console.log("检测到播放结束，准备切换下一首...");
+            if (mediaStatus === MediaPlayer.LoadedMedia
+                    || mediaStatus === MediaPlayer.BufferedMedia) {
+                if (targetStartPosition > 0 && seekable) {
+                    console.log("2026 恢复位置成功:", targetStartPosition)
+                    player.position = targetStartPosition
+                    targetStartPosition = 0
+                }
+            } // 情况 B: 播放自然结束
+            else if (mediaStatus === MediaPlayer.EndOfMedia) {
+                console.log("检测到播放结束，准备切换下一首...")
 
-                   // 触发下一首逻辑 (通过 Connector 发送指令给 C++ 处理列表循环)
-                   Connector.dispatch("play_next", {});
-               }
+                // 触发下一首逻辑 (通过 Connector 发送指令给 C++ 处理列表循环)
+                Connector.dispatch("play_next", {})
             }
+        }
         // 音量 0.0 ~ 1.0
         onPlaybackStateChanged: {
             if (player.playbackState === MediaPlayer.PlayingState) {
@@ -171,9 +180,9 @@ Item {
                             Layout.fillWidth: true
                             Layout.preferredHeight: 1
                             RightPlayerWidgetFunContent {
-                                 onSwitchModeBtnClick:{
-                                     Connector.dispatch("switch_mode", {})
-                                 }
+                                onSwitchModeBtnClick: {
+                                    Connector.dispatch("switch_mode", {})
+                                }
                             }
                         }
                         Item {
@@ -187,7 +196,10 @@ Item {
                                                      //     // 跳转播放器进度：总时长 * 比例
                                                      //     player.position = player.duration * percent
                                                      // }
-                                                     Connector.dispatch("seek", {percent:percent})
+                                                     Connector.dispatch("seek",
+                                                                        {
+                                                                            "percent": percent
+                                                                        })
                                                  }
                             }
                         }
@@ -204,7 +216,7 @@ Item {
                                     Connector.dispatch("play_prev", {})
                                 }
                                 onNextBtnOnClick: {
-                                    Connector.dispatch("play_next", {});
+                                    Connector.dispatch("play_next", {})
                                 }
                             }
                         }

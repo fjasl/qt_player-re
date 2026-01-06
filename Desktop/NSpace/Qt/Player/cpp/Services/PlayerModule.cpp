@@ -250,6 +250,10 @@ void PlayerModule::init() {
         currentTrack["path"] = filePath;
         // 确保 position 初始为 0
         currentTrack["position"] = 0;
+        currentTrack["title"] = metadata.value("title");
+        currentTrack["artist"] = metadata.value("artist");
+        currentTrack["duration"] = metadata.value("duration");
+        currentTrack["cover"] = metadata.value("cover"); // Base64
 
         // 3. 更新全局状态 AppState
         ctx.appState->set("current_track", currentTrack);
@@ -276,9 +280,6 @@ void PlayerModule::init() {
             if (history.size() > 50) {
                 history.removeFirst();
             }
-
-            // 可选：同步到 m_state 用于持久化（推荐在合适时机做一次）
-            // ctx.appState->set("play_history", history);
         }
 
 
@@ -316,12 +317,7 @@ void PlayerModule::init() {
         // 3. 更新进度字段
         currentTrack["position"] = pos;
 
-        // 4. 写回状态机（由于此操作非常频繁，建议不要在此时 emitEvent，避免回环）
-        // 仅更新内存状态，AppState::set 内部如果不触发 UI 刷新会更高效
         ctx.appState->set("current_track", currentTrack);
-
-        // 调试打印 (建议每隔几秒打一次，或者干脆注释掉，防止日志刷屏)
-        // qDebug() << "[Player] 进度同步:" << pos / 1000 << "s";
     });
 
     sm.registerHandler("seek", "player_seek", [](const QVariantMap& data, const Context& ctx) {
@@ -364,47 +360,47 @@ void PlayerModule::init() {
         // 获取当前正在播放的索引
         int currentIdx = ctx.appState->get("current_track").toMap().value("index", -1).toInt();
 
+
+
+        QVariantList playlist = ctx.appState->get("playlist").toList();
+        QVariantMap item = playlist.at(nextIdx).toMap();
+        QString filePath = item.value("path").toString();
+
+        if (filePath.isEmpty()) return;
+
+        // 3. 提取元数据
+        QVariantMap metadata = MusicMetadataHelper::extractMetadata(filePath);
+
+        // 4. 构造并存入状态
+        QVariantMap currentTrack = metadata;
+        currentTrack["index"] = nextIdx;
+        currentTrack["path"] = filePath;
+        currentTrack["position"] = 0;
+        // 确保 position 初始为 0
+        currentTrack["title"] = metadata.value("title");
+        currentTrack["artist"] = metadata.value("artist");
+        currentTrack["duration"] = metadata.value("duration");
+        currentTrack["cover"] = metadata.value("cover"); // Base64
+        ctx.appState->set("current_track", currentTrack);
+
+
+        // 5. 发送完整更新事件
+        QVariantMap payload;
+
+        payload["current_track"] = currentTrack;
+        EventBus::instance().emitEvent("current_track", payload);
+        ctx.appState->set("is_playing", true);
+        payload["is_playing"] = true;
+        EventBus::instance().emitEvent("player_state_changed",payload);
+
+
+
+
+
+
         if (nextIdx == currentIdx) {
-            qDebug() << "[Player] 下一首索引与当前一致，仅重置进度并继续播放";
-
-            // 如果索引一致（如单曲循环），我们不重新解析元数据
-            // 仅将播放器进度拉回 0 并确保是播放状态
-            QVariantMap payload;
-            payload["current_track"]= ctx.appState->get("current_track"); // 给前端一个特殊信号，让它 player.position = 0
-
-            EventBus::instance().emitEvent("current_track", payload);
-            ctx.appState->set("is_playing", true);
-            payload["is_playing"] = true;
-            EventBus::instance().emitEvent("player_state_changed",payload);
 
         }else{
-            // 2. 如果索引不一致，执行正常的切歌逻辑
-            QVariantList playlist = ctx.appState->get("playlist").toList();
-            QVariantMap item = playlist.at(nextIdx).toMap();
-            QString filePath = item.value("path").toString();
-
-            if (filePath.isEmpty()) return;
-
-            // 3. 提取元数据
-            QVariantMap metadata = MusicMetadataHelper::extractMetadata(filePath);
-
-            // 4. 构造并存入状态
-            QVariantMap currentTrack = metadata;
-            currentTrack["index"] = nextIdx;
-            currentTrack["path"] = filePath;
-            currentTrack["position"] = 0;
-
-            ctx.appState->set("current_track", currentTrack);
-
-
-            // 5. 发送完整更新事件
-            QVariantMap payload;
-
-            payload["current_track"] = currentTrack;
-            EventBus::instance().emitEvent("current_track", payload);
-            ctx.appState->set("is_playing", true);
-            payload["is_playing"] = true;
-            EventBus::instance().emitEvent("player_state_changed",payload);
 
 
             QVariantList& history = ctx.appState->playlistRecord;
@@ -416,9 +412,6 @@ void PlayerModule::init() {
                 if (history.size() > 50) {
                     history.removeFirst();
                 }
-
-                // 可选：同步到 m_state 用于持久化（推荐在合适时机做一次）
-                // ctx.appState->set("play_history", history);
             }
 
         }

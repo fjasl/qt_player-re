@@ -5,7 +5,7 @@ import QtQuick.Effects
 Item {
     id: root
     property alias source: innerImage.source
-
+    signal clicked()
     Layout.preferredWidth: parent.width * 0.1
     Layout.preferredHeight: parent.height *0.6
     Layout.alignment: Qt.AlignHCenter

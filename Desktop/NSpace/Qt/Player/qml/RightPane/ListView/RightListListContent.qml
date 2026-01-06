@@ -8,7 +8,6 @@ Item {
     // 必须确保这个容器填充父级布局分配的空间
     property Item searchBar: null
 
-
     property int currentPlayingListIndex: -1
     property int activeInt: -1
     property int lastActiveIndex: -1
@@ -23,19 +22,17 @@ Item {
             if (event === "playlist_changed") {
                 root.reloadList(payload.playlist)
             }
-            if(event ==="current_track"){
+            if (event === "current_track") {
                 if (payload.current_track) {
                     var track = payload.current_track
 
                     if (track.index >= 0 && track.index < listItem.count) {
                         root.currentPlayingListIndex = track.index
+                        console.log(" 获得播放索引 index:" + root.currentPlayingListIndex)
+                        activeVisualItem(root.currentPlayingListIndex)
                     }
-                    console.log(" 获得播放索引 index:"+ root.currentPlayingListIndex)
-                    activeVisualItem(root.currentPlayingListIndex)
                 }
             }
-
-
         }
     }
 
@@ -57,10 +54,6 @@ Item {
         highLightItem(sourceIndex)
 
         root.lastActiveIndex = sourceIndex
-
-        // if (doubleClick) {
-        //     root.currentPlayingListIndex = sourceIndex
-        // }
     }
 
     function highLightItem(listIndex) {
@@ -167,8 +160,6 @@ Item {
             var nameWithoutExt = fileName.replace(/\.[^.]+$/,
                                                   "") // 去掉扩展名：01. Hello World
 
-            // 你可以自行决定是显示带扩展名的文件名还是去掉扩展名
-            // 这里我把带扩展名的作为 text，去掉扩展名的作为 name（更美观）
             listItem.append({
                                 "searchBar": false,
                                 "name": nameWithoutExt,
@@ -226,7 +217,9 @@ Item {
                     onactive: model.onActive
                     onTrashBtnClick: {
 
-                        Connector.dispatch("list_track_del",{index:index})
+                        Connector.dispatch("list_track_del", {
+                                               "index": index
+                                           })
                         //listItem.remove(index)
                     }
                     onItemClicked: {
@@ -236,7 +229,9 @@ Item {
                     onItemDoubleClicked: {
                         //root.activeItem(index)
                         root.activeVisualItem(index)
-                        Connector.dispatch("list_track_play",{index:index})
+                        Connector.dispatch("list_track_play", {
+                                               "index": index
+                                           })
                     }
                 }
             }
