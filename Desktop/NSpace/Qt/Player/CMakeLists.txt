@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(Practice VERSION 0.1 LANGUAGES CXX)
 
+set(APP_ICON_RC appicon.rc)
+
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(TagLib_DIR "C:/Users/27576/Desktop/tmp/taglib_output/lib/cmake/taglib")
@@ -12,6 +14,7 @@ qt_standard_project_setup(REQUIRES 6.8)
 
 qt_add_executable(appPractice
     main.cpp
+    ${APP_ICON_RC}
 )
 
 

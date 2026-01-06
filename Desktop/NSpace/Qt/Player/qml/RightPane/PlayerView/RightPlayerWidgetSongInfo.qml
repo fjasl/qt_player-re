@@ -14,7 +14,7 @@ ColumnLayout {
     spacing: 0
     Text {
         id: songTitle
-        text: "This is title"
+        text: ""
         color: "white"
         font.pixelSize: 20
         //font.family: hanSanSCFont.name
@@ -28,7 +28,7 @@ ColumnLayout {
 
     Text {
         id: songArtist
-        text: "Artist"
+        text: ""
         color: "gray"
         font.pixelSize: 15
         //font.family: hanSanSCFont.name
