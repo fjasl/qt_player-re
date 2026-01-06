@@ -16,6 +16,8 @@ public:
         Shuffle
     };
 
+    QVariantList playlistRecord = {};
+
     // ==================== 公共模板（供外部使用） ====================
 
     // 单个歌曲轨道的默认模板（用于 playlist 中的每一项）
@@ -114,7 +116,6 @@ public:
     // 如果你还想暴露当前播放模式（可选）
     QString currentPlayMode() const;
     void setCurrentPlayMode(PlayMode mode);
-    //void mergeStates(QVariantMap& base, const QVariantMap& loaded);
     void mergeStates(const QVariantMap& loaded);
     QVariantMap getState() const { return m_state; }
     void recursiveMerge(QVariantMap& base, const QVariantMap& loaded);
@@ -170,6 +171,8 @@ public:
 private:
     // ==================== 私有状态数据 ====================
     QVariantMap m_state;
+
+
 
     // 内部工具：解析路径为 parts（支持 [index] 语法）
     static QStringList parsePath(const QString& path);

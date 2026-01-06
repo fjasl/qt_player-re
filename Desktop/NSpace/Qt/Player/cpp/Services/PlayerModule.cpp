@@ -26,36 +26,36 @@
 // 注意：不要再写 class PlayerModule { ... }
 // 直接实现 init 方法
 void PlayerModule::init() {
-    QVariantList playlistRecord = {};
+
 
     auto& sm = Connector::instance();
 
-    // LogicManager.cpp
-
-    // 这是一个逻辑委托：输入当前状态，返回下一个索引
-    // 定义委托：接受 AppState 指针和 播放模式枚举
     auto getNextTrackDelegate = [](AppState* state, AppState::PlayMode mode) -> int {
         if (!state) return -1;
 
-        // 1. 提取必要数据
         QVariantMap currentTrack = state->get("current_track").toMap();
         int curIdx = currentTrack.value("index", 0).toInt();
         int total = state->get("playlist").toList().size();
 
         if (total <= 0) return -1;
 
-        // 2. 根据模式计算逻辑
         switch (mode) {
         case AppState::PlayMode::SingleLoop:
-            // 单曲循环：逻辑上下一首还是当前首
             return curIdx;
 
-        case AppState::PlayMode::Shuffle:
-            // 随机播放：在总数范围内取随机值
-            return QRandomGenerator::global()->bounded(total);
+        case AppState::PlayMode::Shuffle: {
+            // 如果列表只有 1 首歌，随机结果只能是自己
+            if (total <= 1) return 0;
+
+            int nextIdx = curIdx;
+            // 2026 推荐做法：通过循环排除当前索引，确保下一首不一样
+            while (nextIdx == curIdx) {
+                nextIdx = QRandomGenerator::global()->bounded(total);
+            }
+            return nextIdx;
+        }
 
         default:
-            // 兜底逻辑：顺序/列表循环
             return (curIdx + 1) % total;
         }
     };
@@ -221,7 +221,7 @@ void PlayerModule::init() {
             // 用户取消，无需额外处理
         }
     });
-    sm.registerHandler("list_track_play","player_list_track_play",[=](const QVariantMap& data,const Context& ctx) mutable{
+    sm.registerHandler("list_track_play","player_list_track_play",[=](const QVariantMap& data,const Context& ctx){
         int index = data.value("index").toInt();
         qDebug() << "[Player] 请求播放 index:" << index << "的音乐";
 
@@ -265,17 +265,24 @@ void PlayerModule::init() {
         ctx.appState->set("is_playing", true); // 更新播放状态
         payload["is_playing"] = true;
         EventBus::instance().emitEvent("player_state_changed",payload);
+
+
+        QVariantList& history = ctx.appState->playlistRecord;
         int currentIndex = ctx.appState->get("current_track").toMap().value("index").toInt();
-        QVariantList playlistRecord = ctx.appState->get("play_history").toList();
-        if (playlistRecord.isEmpty() || playlistRecord.last().toInt() != currentIndex) {
-            playlistRecord.append(currentIndex);
-            // 4. (可选) 限制历史长度为 50，防止内存无限增长
-            if (playlistRecord.size() > 50) {
-                playlistRecord.removeFirst();
+        if (history.isEmpty() || history.last().toInt() != currentIndex) {
+            history.append(currentIndex);
+
+            // 限制长度为 50
+            if (history.size() > 50) {
+                history.removeFirst();
             }
 
+            // 可选：同步到 m_state 用于持久化（推荐在合适时机做一次）
+            // ctx.appState->set("play_history", history);
         }
-        playlistRecord.append(ctx.appState->get("current_track").toMap().value("index").toInt());
+
+
+
         qDebug() << "[Player] 状态已更新并下发，当前索引:" << index;
     });
     sm.registerHandler("play_toggle", "player_play_toggle", [](const QVariantMap& data, const Context& ctx) {
@@ -343,7 +350,7 @@ void PlayerModule::init() {
         EventBus::instance().emitEvent("seek_handled", payload);
     });
     // 注册：手动点击下一首
-    sm.registerHandler("play_next", "player_play_next", [=](const QVariantMap& data, const Context& ctx) mutable{
+    sm.registerHandler("play_next", "player_play_next", [=](const QVariantMap& data, const Context& ctx){
         // 1. 计算下一首索引
         QString modeStr = ctx.appState->currentPlayMode();
 
@@ -399,15 +406,19 @@ void PlayerModule::init() {
             payload["is_playing"] = true;
             EventBus::instance().emitEvent("player_state_changed",payload);
 
+
+            QVariantList& history = ctx.appState->playlistRecord;
             int currentIndex = ctx.appState->get("current_track").toMap().value("index").toInt();
-            QVariantList playlistRecord = ctx.appState->get("play_history").toList();
-            if (playlistRecord.isEmpty() || playlistRecord.last().toInt() != currentIndex) {
-                playlistRecord.append(currentIndex);
-                // 4. (可选) 限制历史长度为 50，防止内存无限增长
-                if (playlistRecord.size() > 50) {
-                    playlistRecord.removeFirst();
+            if (history.isEmpty() || history.last().toInt() != currentIndex) {
+                history.append(currentIndex);
+
+                // 限制长度为 50
+                if (history.size() > 50) {
+                    history.removeFirst();
                 }
 
+                // 可选：同步到 m_state 用于持久化（推荐在合适时机做一次）
+                // ctx.appState->set("play_history", history);
             }
 
         }
@@ -441,19 +452,23 @@ void PlayerModule::init() {
         qDebug() << "[Player] 播放模式已更新为字符串:" << nextModeStr;
     });
 
-    sm.registerHandler("play_prev", "player_play_prev", [=](const QVariantMap& data, const Context& ctx) mutable{
+    sm.registerHandler("play_prev", "player_play_prev", [=](const QVariantMap& data, const Context& ctx){
 
-        if (playlistRecord.toList().isEmpty()) {
-            qDebug() << "[Player] 历史记录为空，无法回退";
-            // 可选：如果历史为空，可以执行简单的 (index - 1) 逻辑，或者直接返回
+        QVariantList& history = ctx.appState->playlistRecord;
+
+        // 安全检查
+        if (history.size() == 1) {
+            // 历史中只有当前这首（或为空），无法回到“上一首”
+            qDebug() << "[Player] 没有上一首可返回";
+            // 可以选择播放第一首、保持当前、或暂停等
             return;
         }
 
-        // 2. 弹出最后一项 (Pop)
-        int targetIdx = playlistRecord.toList().takeLast().toInt();
+        // 1. 移除当前这首（栈顶）
+        history.removeLast();
 
-        //int index = data.value("index").toInt();
-        //qDebug() << "[Player] 请求播放 index:" << index << "的音乐";
+        // 2. 拿到新的栈顶（原来的倒数第二个）
+        int targetIdx = history.last().toInt();
 
         QVariantList currentPlaylist = ctx.appState->get("playlist").toList();
 
@@ -484,9 +499,6 @@ void PlayerModule::init() {
         // 3. 更新全局状态 AppState
         ctx.appState->set("current_track", currentTrack);
 
-
-        // 4. 发送事件通知 QML 同步 UI
-        // 假设你的 EventBus 接受事件名和数据载荷
         QVariantMap payload;
         payload["current_track"] = currentTrack;
 

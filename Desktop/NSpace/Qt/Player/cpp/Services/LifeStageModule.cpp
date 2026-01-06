@@ -20,6 +20,13 @@ void LifeStageModule::init() {
 
         EventBus::instance().emitEvent("current_track",{payload});
 
+
+        QVariantList& history = ctx.appState->playlistRecord;
+        int currentIndex = ctx.appState->get("current_track").toMap().value("index").toInt();
+        history.append(currentIndex);
+
+
+
         payload["play_mode"] = ctx.appState->currentPlayMode();
         EventBus::instance().emitEvent("mode_switched", payload);
 
