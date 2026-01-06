@@ -116,42 +116,5 @@ Rectangle {
         height: 1 // 边框粗细
         color: Qt.rgba(255, 255, 255, 0.2) // 灰色，不透明
     }
-    // 使用 ListView 附加属性监听移除动作
-    SequentialAnimation {
-        id: removeAnimation
 
-        // 关键步骤：阻止立即销毁
-        PropertyAction {
-            target: root
-            property: "ListView.delayRemove"
-            value: true
-        }
-
-        // 执行动画
-        NumberAnimation {
-            target: root
-            property: "x"
-            to: -root.width
-            duration: 300
-            easing.type: Easing.InCubic
-        }
-        NumberAnimation {
-            target: root
-            property: "height"
-            to: 0
-            duration: 200
-        }
-
-        // 动画结束，允许销毁
-        PropertyAction {
-            target: root
-            property: "ListView.delayRemove"
-            value: false
-        }
-    }
-
-    // 2. 信号处理器里通过脚本调用 start()
-    ListView.onRemove: {
-        removeAnimation.start()
-    }
 }

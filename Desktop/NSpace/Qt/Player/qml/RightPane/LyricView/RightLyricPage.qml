@@ -17,7 +17,6 @@ Item {
                 }
             }
             if (event === "lyric_index_changed") {
-                console.log("歌词索引变动" + payload.index)
                 scrollLyricContainer.currentIndex = payload.index
             }
         }

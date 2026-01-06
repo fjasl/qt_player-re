@@ -7,12 +7,13 @@ Item {
     //            // 指向你的字体文件路径
     //            source: "qrc:/font/font/SourceHanSansSC-Bold.otf"
     //        }
-    id:root
+    id: root
     property alias text: lyricText.text
 
     property bool active: false // 激活状态开关
     Layout.fillWidth: true
-    height: lyricText.height
+    height: lyricText.contentHeight
+    Layout.preferredHeight: height
     Text {
         id: lyricText
         width: parent.width // 必须指定宽度，wrapMode 才会生效

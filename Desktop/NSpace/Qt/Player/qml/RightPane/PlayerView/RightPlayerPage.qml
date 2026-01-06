@@ -84,13 +84,11 @@ Item {
             if (mediaStatus === MediaPlayer.LoadedMedia
                     || mediaStatus === MediaPlayer.BufferedMedia) {
                 if (targetStartPosition > 0 && seekable) {
-                    console.log("2026 恢复位置成功:", targetStartPosition)
                     player.position = targetStartPosition
                     targetStartPosition = 0
                 }
             } // 情况 B: 播放自然结束
             else if (mediaStatus === MediaPlayer.EndOfMedia) {
-                console.log("检测到播放结束，准备切换下一首...")
 
                 // 触发下一首逻辑 (通过 Connector 发送指令给 C++ 处理列表循环)
                 Connector.dispatch("play_next", {})

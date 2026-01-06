@@ -28,7 +28,6 @@ Item {
 
                     if (track.index >= 0 && track.index < listItem.count) {
                         root.currentPlayingListIndex = track.index
-                        console.log(" 获得播放索引 index:" + root.currentPlayingListIndex)
                         activeVisualItem(root.currentPlayingListIndex)
                     }
                 }
@@ -138,7 +137,6 @@ Item {
 
         // 2. 安全检查
         if (!tracks || tracks.length === 0) {
-            console.log("reloadList: tracks is empty or null")
             return
         }
 
@@ -148,8 +146,6 @@ Item {
 
             // 必须有 path，否则跳过该项
             if (!track.hasOwnProperty("path") || track["path"] === "") {
-                console.warn("reloadList: track at index", i,
-                             "has no valid path, skipping")
                 continue
             }
 
@@ -170,7 +166,6 @@ Item {
                             })
         }
 
-        console.log("reloadList: successfully loaded", listItem.count, "tracks")
 
         // 可选：加载完成后自动滚动到顶部或当前播放项
         scrollableList.positionViewAtBeginning()
@@ -320,29 +315,6 @@ Item {
             background: Rectangle {
                 implicitWidth: 6
                 color: "black" // 通常背景设为透明更好看
-            }
-        }
-
-        add: Transition {
-            NumberAnimation {
-                property: "x"
-                from: scrollableList.width // 从右侧开始
-                to: 0
-                duration: 400
-                easing.type: Easing.OutCubic
-            }
-            NumberAnimation {
-                property: "opacity"
-                from: 0
-                to: 1
-                duration: 400
-            }
-        }
-        remove: Transition {
-            NumberAnimation {
-                property: "x"
-                to: -scrollableList.width // 向左滑出
-                duration: 300
             }
         }
         Behavior on contentY {

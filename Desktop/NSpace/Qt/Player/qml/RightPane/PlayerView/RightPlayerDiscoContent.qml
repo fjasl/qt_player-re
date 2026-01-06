@@ -15,9 +15,7 @@ Item {
         // 使用 Qt 6 推荐的 function 语法
         function onBackendEvent(event, payload) {
             if (event === "cover_request_reply") {
-                console.log("即将载入图片")
                 coverImage.source = payload.base64
-                console.log("载入图片成功")
             }
         }
     }

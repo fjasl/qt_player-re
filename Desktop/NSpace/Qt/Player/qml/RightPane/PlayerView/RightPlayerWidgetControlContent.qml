@@ -17,9 +17,6 @@ RowLayout {
 
            // 使用 Qt 6 推荐的 function 语法
            function onBackendEvent(event, payload) {
-               if (event === "test") {
-                   console.log("prev clicked 这里是响应")
-               }
            }
        }
 
@@ -52,7 +49,6 @@ RowLayout {
         // }
         onClicked: root.playBtnOnClick()
         Component.onCompleted: {
-            console.log("BTN size:", width, height)
         }
     }
     Item {
