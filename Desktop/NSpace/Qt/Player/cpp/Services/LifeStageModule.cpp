@@ -57,6 +57,29 @@ void LifeStageModule::init() {
         payload["play_mode"] = ctx.appState->currentPlayMode();
         EventBus::instance().emitEvent("mode_switched", payload);
 
+        ctx.lrcParser->loadAndParseLrcFile(session["lyric_bind"].toString());
+        const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
+        // 2. 转换为 QVariantList (QML 认识这个格式)
+        QVariantList lyricData;
+        lyricData.reserve(lyrics.size()); // 性能优化
+
+        for (const auto& line : lyrics) {
+            QVariantMap lineMap;
+            lineMap["time"] = line.time;
+            lineMap["text"] = line.text;
+            lyricData.append(lineMap);
+        }
+
+        payload["lyriclist"] = lyricData; // 现在赋值成功了，因为 lyricData 是 QVariantList
+
+        // 4. 发送事件
+        EventBus::instance().emitEvent("lyric_changed", payload);
+
+
+        int lyric_index = ctx.lrcParser->findLyricByTime(session["position"].toDouble()/1000);
+        payload["index"]= lyric_index;
+        EventBus::instance().emitEvent("lyric_index_changed", payload);
+
 
     });
 

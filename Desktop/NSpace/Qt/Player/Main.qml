@@ -56,8 +56,9 @@ ApplicationWindow {
 
                     // 中间 88%
                     RoundCornorContainer {
-                        Item{
-                            anchors.centerIn: parent
+                        Item {
+                            anchors.fill: parent
+
                             DragHandler {}
                         }
 
@@ -68,9 +69,8 @@ ApplicationWindow {
                         Layout.fillWidth: true
                         //Layout.preferredWidth: parent.width * 0.88 // 明确指定 88%
                         Layout.preferredWidth: 88
-                        RightPaneContent{
-                            id:rightContent
-
+                        RightPaneContent {
+                            id: rightContent
                         }
                     }
                 }
@@ -78,7 +78,7 @@ ApplicationWindow {
         }
     }
     Component.onCompleted: {
-           // 可以在这里驱动 Connector 或 Logic
-           Connector.dispatch("window_ready", {})
-       }
+        // 可以在这里驱动 Connector 或 Logic
+        Connector.dispatch("window_ready", {})
+    }
 }

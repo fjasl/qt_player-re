@@ -45,8 +45,8 @@ Item {
 
             Behavior on y {
                 NumberAnimation {
-                    duration: 300 // 平滑滚动通常建议在 200ms - 400ms 之间
-                    easing.type: Easing.OutQuad // 减速到终点，没有回弹，视觉最舒适
+                    duration: 100 // 平滑滚动通常建议在 200ms - 400ms 之间
+                    easing.type: Easing.InOutQuad // 减速到终点，没有回弹，视觉最舒适
                 }
             }
 
@@ -61,7 +61,7 @@ Item {
                 // 逻辑：y = 视口基准线 - 目标在内容中的位置
                 var viewportHeight = container.height
                 var targetLineY = targetItem.y
-                var desiredY = (viewportHeight * 0.35) - targetLineY
+                var desiredY = ((viewportHeight * 0.35)-viewportHeight*0.05) - targetLineY
 
                 // 3. 边界限制 (Clamping)
                 // 上边界：y 不能大于 0 (防止第一行下方留白)
@@ -69,7 +69,7 @@ Item {
                 // 下边界：y 不能小于 (视口高度 - 内容总高度) (防止最后一行上方留白)
                 // 如果内容总高度小于视口高度，则限制在 0
                 var contentHeight = lyricLayout.height
-                var bottomLimit = Math.min(0, viewportHeight - contentHeight)
+                var bottomLimit = Math.min(0, (viewportHeight-viewportHeight*0.05) - contentHeight)
 
                 return Math.max(bottomLimit, Math.min(topLimit, desiredY))
             }
