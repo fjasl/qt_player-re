@@ -30,7 +30,7 @@ qt_add_qml_module(appPractice
          qml/LeftPane/LeftNavButton.qml
          qml/LeftPane/LeftPaneContent.qml
          qml/Other/RoundCornorContainer.qml
-         qml/RightPane/PlayerView/RightPaneContent.qml
+         qml/RightPane/RightPaneContent.qml
          qml/RightPane/PlayerView/RightPlayerControlButton.qml
          qml/RightPane/PlayerView/RightPlayerFunButton.qml
          qml/RightPane/PlayerView/RightPlayerFunContent.qml

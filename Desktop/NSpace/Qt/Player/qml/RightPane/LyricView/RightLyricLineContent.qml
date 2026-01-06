@@ -2,7 +2,12 @@ import QtQuick
 import QtQuick.Layouts
 
 Item {
-
+    // FontLoader {
+    //            id: hanSanSCFont
+    //            // 指向你的字体文件路径
+    //            source: "qrc:/font/font/SourceHanSansSC-Bold.otf"
+    //        }
+    id:root
     property alias text: lyricText.text
 
     property bool active: false // 激活状态开关
@@ -17,7 +22,7 @@ Item {
 
         // 2. color: #a5a5a5
         color: root.active ? "#ffffff" : "#a5a5a5"
-
+        //font.family: hanSanSCFont.name
         // 3. word-wrap: break-word & white-space: normal
         // WrapAnywhere 对应 break-word，允许在单词内部换行
         wrapMode: Text.WrapAnywhere

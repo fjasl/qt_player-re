@@ -3,6 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 ColumnLayout {
+
+    // FontLoader {
+    //        id: hanSanSCFont
+    //        // 指向你的字体文件路径
+    //        source: "qrc:/font/font/SourceHanSansSC-Bold.otf"
+    //    }
     anchors.fill: parent
     spacing: 0
     signal seekRequested(real percent)

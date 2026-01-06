@@ -2,6 +2,12 @@ import QtQuick
 import QtQuick.Layouts
 
 Rectangle {
+
+    // FontLoader {
+    //            id: hanSanSCFont
+    //            // 指向你的字体文件路径
+    //            source: "qrc:/font/font/SourceHanSansSC-Bold.otf"
+    //        }
     id: root
     signal trashBtnClick(int itemIndex)
     signal itemClicked
@@ -10,11 +16,6 @@ Rectangle {
     property alias text: itemText.text
     property bool onactive: false
 
-    // Binding {
-    //     target: root
-    //     property: "onactive"
-    //     value: model.onActive
-    // }
 
     width: scrollableList.width
     height: scrollableList.height * 0.2
@@ -73,6 +74,7 @@ Rectangle {
             Text {
                 id: itemText
                 text: ""
+                //font.family: hanSanSCFont.name
                 anchors.verticalCenter: parent.verticalCenter
                 // 水平靠左
                 anchors.left: parent.left
