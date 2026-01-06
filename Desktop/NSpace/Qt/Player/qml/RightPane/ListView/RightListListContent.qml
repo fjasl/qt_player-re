@@ -216,11 +216,10 @@ Item {
                     text: model.text
                     onactive: model.onActive
                     onTrashBtnClick: {
-
+                        //listItem.remove(index)
                         Connector.dispatch("list_track_del", {
                                                "index": index
                                            })
-                        //listItem.remove(index)
                     }
                     onItemClicked: {
                         //root.activeItem(index)

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 
 
     AppState state;
-
+    LrcParser lrcparser;
     AppLogic::initAll();
 
     QVariantMap savedState = Storage::instance().loadState();
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 
 
     Connector::instance().setAppState(&state);
+    Connector:: instance().setLrcParser(&lrcparser);
     //Storage::instance().saveState(state.getState());
 
 

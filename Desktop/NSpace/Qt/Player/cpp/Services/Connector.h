@@ -1,5 +1,6 @@
 // StateMachine.h
 #include "StoreState.h"
+#include "LrcParser.h"
 #include <QObject>
 #include <QVariantMap>
 #include <functional>
@@ -11,8 +12,7 @@
 struct Context {
     // 可以在这里持有指向其他管理类的指针
     AppState* appState = nullptr;
-    void* storage;
-    QObject* eventBus;
+    LrcParser* lrcParser = nullptr;
 };
 
 
@@ -39,17 +39,11 @@ public:
         m_context.appState = state;
         qDebug() << "[Connector] AppState pointer set:" << (state ? "valid" : "nullptr");
     }
-
-    /** 设置通用 storage 指针（如果你需要） */
-    void setStorage(void* storage)
+    /** 设置当前使用的 AppState 实例（最常用） */
+    void setLrcParser(LrcParser* lrcParser)
     {
-        m_context.storage = storage;
-    }
-
-    /** 设置 eventBus（如果你有 EventBus 单例） */
-    void setEventBus(QObject* bus)
-    {
-        m_context.eventBus = bus;
+        m_context.lrcParser = lrcParser;
+        qDebug() << "[Connector] AppState pointer set:" << (lrcParser ? "valid" : "nullptr");
     }
 
 
