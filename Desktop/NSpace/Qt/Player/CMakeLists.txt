@@ -40,6 +40,7 @@ qt_add_qml_module(appPractice
          qml/RightPane/PlayerView/RightPlayerWidgetFunContent.qml
          qml/RightPane/PlayerView/RightPlayerWidgetProgressBar.qml
          qml/RightPane/PlayerView/RightPlayerWidgetSongInfo.qml
+         QML_FILES qml/RightPane/PlayerView/RightPlayerDiscoContent.qml
          qml/RightPane/ListView/RightListFunButton.qml
          qml/RightPane/ListView/RightListFunContent.qml
          qml/RightPane/ListView/RightListItemContent.qml
@@ -48,6 +49,7 @@ qt_add_qml_module(appPractice
          qml/RightPane/ListView/RightListListContent.qml
          qml/RightPane/ListView/RightListPage.qml
          qml/RightPane/LyricView/RightLyricPage.qml
+         qml/RightPane/LyricView/RightLyricLineContent.qml
          qml/RightPane/SettingView/RightSettingPage.qml
          SOURCES cpp/Services/PlayerServices.cpp
          SOURCES cpp/Services/Connector.h
@@ -56,7 +58,7 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/PlayerModule.cpp
          SOURCES cpp/Services/AppLogic.cpp
          SOURCES cpp/Services/PlayerModule.h
-         QML_FILES qml/RightPane/PlayerView/RightPlayerDiscoContent.qml
+
          SOURCES cpp/Services/Storage.h
          SOURCES cpp/Services/Storage.cpp
          SOURCES cpp/Services/StoreState.h
@@ -67,7 +69,8 @@ qt_add_qml_module(appPractice
          SOURCES cpp/Services/extractMetaData.cpp
          SOURCES cpp/Services/LrcParser.h
          SOURCES cpp/Services/LrcParser.cpp
-         SOURCES cpp/Services/LyricModule.cpp cpp/Services/LyricModule.h
+         SOURCES cpp/Services/LyricModule.cpp
+         SOURCES cpp/Services/LyricModule.h
 
 )
 

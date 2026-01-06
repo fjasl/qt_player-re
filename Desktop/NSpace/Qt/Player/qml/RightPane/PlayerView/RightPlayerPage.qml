@@ -235,11 +235,5 @@ Item {
     }
     Component.onCompleted: {
 
-        // Windows 本地路径写法（注意用正斜杠 / ，或者双反斜杠 \\）
-        //root.audioSource = "file:///D:/Resource/Music/风错过雨.mp3"
-
-        // 或者这样写也行（Qt 会自动处理）
-        // player.source = "file:D:/Resource/Music/aliez.mp3"
-        //player.play() // 自动开始播放，方便你立刻听到声音测试
     }
 }

@@ -287,13 +287,28 @@ void PlayerModule::init() {
         ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
         const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
 
-        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        QVariantList lyricData;
+        lyricData.reserve(lyrics.size()); // 性能优化
+
         for (const auto& line : lyrics) {
-            // 格式化打印：时间保留 3 位小数，左对齐
-            qDebug() << QString("[%1s] %2")
-                            .arg(line.time, 8, 'f', 3, ' ')
-                            .arg(line.text);
+            QVariantMap lineMap;
+            lineMap["time"] = line.time;
+            lineMap["text"] = line.text;
+            lyricData.append(lineMap);
         }
+
+        payload["lyriclist"] = lyricData; // 现在赋值成功了，因为 lyricData 是 QVariantList
+
+        // 4. 发送事件
+        EventBus::instance().emitEvent("lyric_changed", payload);
+
+        // qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        // for (const auto& line : lyrics) {
+        //     // 格式化打印：时间保留 3 位小数，左对齐
+        //     qDebug() << QString("[%1s] %2")
+        //                     .arg(line.time, 8, 'f', 3, ' ')
+        //                     .arg(line.text);
+        // }
 
 
 
@@ -429,14 +444,30 @@ void PlayerModule::init() {
 
         ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
         const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
+        // 2. 转换为 QVariantList (QML 认识这个格式)
+        QVariantList lyricData;
+        lyricData.reserve(lyrics.size()); // 性能优化
 
-        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
         for (const auto& line : lyrics) {
-            // 格式化打印：时间保留 3 位小数，左对齐
-            qDebug() << QString("[%1s] %2")
-                            .arg(line.time, 8, 'f', 3, ' ')
-                            .arg(line.text);
+            QVariantMap lineMap;
+            lineMap["time"] = line.time;
+            lineMap["text"] = line.text;
+            lyricData.append(lineMap);
         }
+
+        payload["lyriclist"] = lyricData; // 现在赋值成功了，因为 lyricData 是 QVariantList
+
+        // 4. 发送事件
+        EventBus::instance().emitEvent("lyric_changed", payload);
+
+
+        // qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        // for (const auto& line : lyrics) {
+        //     // 格式化打印：时间保留 3 位小数，左对齐
+        //     qDebug() << QString("[%1s] %2")
+        //                     .arg(line.time, 8, 'f', 3, ' ')
+        //                     .arg(line.text);
+        // }
 
 
     });
@@ -525,14 +556,28 @@ void PlayerModule::init() {
 
         ctx.lrcParser->loadAndParseLrcFile(currentTrack["lyric_bind"].toString());
         const QList<LyricLine>& lyrics = ctx.lrcParser->getParsedLyrics();
+        QVariantList lyricData;
+        lyricData.reserve(lyrics.size()); // 性能优化
 
-        qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
         for (const auto& line : lyrics) {
-            // 格式化打印：时间保留 3 位小数，左对齐
-            qDebug() << QString("[%1s] %2")
-                            .arg(line.time, 8, 'f', 3, ' ')
-                            .arg(line.text);
+            QVariantMap lineMap;
+            lineMap["time"] = line.time;
+            lineMap["text"] = line.text;
+            lyricData.append(lineMap);
         }
+
+        payload["lyriclist"] = lyricData; // 现在赋值成功了，因为 lyricData 是 QVariantList
+
+        // 4. 发送事件
+        EventBus::instance().emitEvent("lyric_changed", payload);
+
+        // qDebug() << "---- 歌词解析结果 (共" << lyrics.size() << "行) ----";
+        // for (const auto& line : lyrics) {
+        //     // 格式化打印：时间保留 3 位小数，左对齐
+        //     qDebug() << QString("[%1s] %2")
+        //                     .arg(line.time, 8, 'f', 3, ' ')
+        //                     .arg(line.text);
+        // }
 
 
 
